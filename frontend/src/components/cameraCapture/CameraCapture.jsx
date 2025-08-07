@@ -1,35 +1,29 @@
-import { useEffect, useRef, useState } from "react";
-import "./styles/CameraCapture.css"
+import { useEffect, useRef } from "react";
+import "./cameraCapture.css";
+
 const API = process.env.REACT_APP_API_URL || "";
 
 const CameraCapture = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const [failedFrames, setFailedFrames] = useState([]);
-
     useEffect(() => {
-        const startCamera = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "user" },
-                });
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then((stream) => {
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
-            } catch (err) {
+            })
+            .catch((err) => {
                 console.error("Camera access error:", err);
-            }
-        };
-        startCamera();
+            });
     }, []);
-
     useEffect(() => {
         const captureFrame = async () => {
-            if (!videoRef.current || !canvasRef.current) return;
             const video = videoRef.current;
             const canvas = canvasRef.current;
-            const context = canvas.getContext("2d");
+            if (!video || !canvas) return;
 
+            const context = canvas.getContext("2d");
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -49,29 +43,18 @@ const CameraCapture = () => {
                     throw new Error("No API set");
                 }
             } catch (err) {
-                console.warn("API failed. Frame stored in memory.");
-                setFailedFrames((prev) => [...prev, frame]);
+                console.warn("API failed. Frame dropped.");
             }
         };
 
         const interval = setInterval(() => {
-            // Capture 4 frames, 1 per second
             for (let i = 0; i < 4; i++) {
-                setTimeout(captureFrame, i * 1000); // Delay each capture by 1s
+                setTimeout(captureFrame, i * 1000);
             }
-        }, 30000); // Every 30 seconds
+        }, 30000); 
 
         return () => clearInterval(interval);
-    }, []);
-
-    const downloadFrames = () => {
-        failedFrames.forEach((frame, index) => {
-            const link = document.createElement("a");
-            link.href = frame;
-            link.download = `frame_${index + 1}.jpg`;
-            link.click();
-        });
-    };
+    }, [videoRef, canvasRef]);
 
     return (
         <div className="container">
@@ -80,12 +63,7 @@ const CameraCapture = () => {
                 <video ref={videoRef} autoPlay playsInline muted />
                 <canvas ref={canvasRef} style={{ display: "none" }} />
             </div>
-            <p>Stored frames (in-memory): {failedFrames.length}</p>
-            {failedFrames.length > 0 && (
-                <button onClick={downloadFrames}>Download Stored Frames</button>
-            )}
         </div>
     );
 };
-
 export default CameraCapture;

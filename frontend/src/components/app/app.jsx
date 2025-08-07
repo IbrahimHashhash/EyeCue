@@ -1,6 +1,6 @@
-import CameraCapture from "./CameraCapture";
+import CameraCapture from "../cameraCapture/cameraCapture";
 
-function App() {
+const  App= () => {
   return (
     <div className="App">
       <CameraCapture/>
