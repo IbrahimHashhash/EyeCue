@@ -1,0 +1,104 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #1e1e2f;
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar li {
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.sidebar li:hover {
+  background-color: #33334d;
+}
+
+.sidebar li.active {
+  background-color: #4c51bf;
+  color: white;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.main-content h1 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 32px;
+  color: #333;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+  gap: 20px;
+}
+
+.student-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.student-card:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.15);
+}
+
+.student-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  color: #222;
+}
+
+.student-card p {
+  font-size: 18px;
+  color: #555;
+  margin: 0;
+}
+
+.score-red {
+  background-color: #eab4b0; 
+  color: white;
+}
+
+.score-yellow {
+  background-color: #f0e9b0; 
+  color: black;
+}
+
+.score-green {
+  background-color: #c3f4c5; 
+  color: white;
+}
+
+
