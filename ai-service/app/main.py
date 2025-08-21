@@ -1,47 +1,32 @@
-# main.py
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
 import logging
-from typing import Optional
+import os
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+from dotenv import load_dotenv
 
-from core.initialization import ServiceInitializer
+from core.initialization import init_app, shutdown_app
 from endpoints.attention import create_attention_router
-from services.attention_analysis import AttentionAnalysisService
 
+# Logging configuration
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class AppState:
-    def __init__(self):
-        self.attention_service: Optional[AttentionAnalysisService] = None
-
-app_state = AppState()
+# Load environment variables
+load_dotenv()
+PORT = int(os.getenv("PORT", 8000))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        logger.info("Initializing services...")
-        app_state.attention_service = ServiceInitializer.create_attention_service()
-        logger.info("Services initialized")
+        init_app(app)
+        logger.info("Services initialized and attached to app.state")
         yield
-        
     except Exception as e:
-        logger.error(f"Startup failed: {e}")
+        logger.exception("Startup failed: %s", e)
         raise
     finally:
-        logger.info("Shutting down services...")
-        if app_state.attention_service:
-            try:
-                app_state.attention_service.close()
-                logger.info("Services closed successfully")
-            except Exception as e:
-                logger.error(f"Error during service cleanup: {e}")
-
-def get_attention_service() -> AttentionAnalysisService:
-    """Dependency injection for attention service."""
-    if app_state.attention_service is None:
-        raise RuntimeError("Attention service not initialized")
-    return app_state.attention_service
+        await shutdown_app(app)
+        logger.info("Shutdown complete")
 
 def create_application() -> FastAPI:
     app = FastAPI(
@@ -50,17 +35,20 @@ def create_application() -> FastAPI:
         version="1.0.0",
         lifespan=lifespan
     )
-    
-    app.include_router(
-        create_attention_router(get_attention_service),
-        prefix="/attention",
-        tags=["attention"]
-    )
-    
+
+    # Include routers
+    app.include_router(create_attention_router(), prefix="/attention", tags=["attention"])
+
+    # Health endpoint
+    @app.get("/health")
+    def health(request: Request):
+        svc = getattr(request.app.state, "attention_service", None)
+        return {"ready": svc is not None}
+
     return app
 
 app = create_application()
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
