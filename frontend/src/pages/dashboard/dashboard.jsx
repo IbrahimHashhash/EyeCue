@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./dashboard.css";
+import endpoints from "../../api/endpoints";
 
 const Dashboard = () => {
-  const [students, setStudents] = useState([]); 
+  const [students, setStudents] = useState([]);
+  const [avgScore, setAvgScore] = useState(null);
 
   useEffect(() => {
-    fetch("/api/average-score")
+    fetch(endpoints.averageScore)
       .then((res) => res.json())
-      .then((data) => setStudents(data))
+      .then((data) => {
+        setStudents(data.students);
+        setAvgScore(data.avgScore);
+      })
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    if (avgScore !== null && avgScore < 40) {
+      toast("⚠️ Low Attention Level!");
+    }
+  }, [avgScore]);
 
   const getScoreClass = (score) => {
     if (score < 40) return "score-red";
@@ -47,6 +60,7 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 };
