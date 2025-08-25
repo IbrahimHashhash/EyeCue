@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./dashboard.css";
-import endpoints from "../../api/endpoints";
+import ENDPOINTS from "../../api/endpoints";
 
 const Dashboard = () => {
   const [students, setStudents] = useState([]);
   const [avgScore, setAvgScore] = useState(null);
 
   useEffect(() => {
-    fetch(endpoints.averageScore)
+    fetch(ENDPOINTS.SCORE.AVERAGE)
       .then((res) => res.json())
       .then((data) => {
         setStudents(data.students);

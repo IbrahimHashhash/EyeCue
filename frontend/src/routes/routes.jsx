@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/dashboard/dashboard";
-import CameraCapture from "../components/cameraCapture/CameraCapture";
+import CameraCapture from "../pages/cameraCapture/cameraCapture";
 
 export const ROUTES = {
   DASHBOARD: "/dashboard",
