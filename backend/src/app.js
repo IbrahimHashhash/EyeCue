@@ -4,6 +4,7 @@ import cors from 'cors';
 import { init } from './socket/index.js';
 import studentRoutes from './routes/student.js';
 import { PORT, FE_ORIGINS } from './config/env.js';
+import { initializeDbConnection } from './services/db.js'; 
 
 const app = express();
 const server = http.createServer(app);
@@ -23,6 +24,14 @@ app.use('/student', studentRoutes);
 
 init(server);
 
-server.listen(PORT, () => {
-    console.log(`Server running on PORT: ${PORT}`);
-});
+(async () => {
+    try {
+        await initializeDbConnection();
+        server.listen(PORT, () => {
+            console.log(`Server running on PORT: ${PORT}`);
+        });
+    } catch (err) {
+        console.error("Failed to connect DB, cannot start server:", err);
+        process.exit(1);
+    }
+})();

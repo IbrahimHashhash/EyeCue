@@ -11,7 +11,10 @@
     "axios": "1.11.0",
     "dotenv": "17.2.1",
     "express": "5.1.0",
-    "socket.io": "4.8.1"
+    "mssql": "^11.0.1",
+    "mysql2": "^3.14.3",
+    "socket.io": "4.8.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "nodemon": "3.1.10"
