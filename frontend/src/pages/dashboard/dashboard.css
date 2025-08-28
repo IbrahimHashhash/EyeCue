@@ -924,3 +924,21 @@
     font-size: 18px;
   }
 }
+
+  .notification {
+    background-color: rgb(149, 77, 149);
+    justify-content: center;
+    font-size: large;
+    color: white;
+    width: 300px;
+    height: 100px;
+  }
+
+  .toast-progress {
+    background: white;
+  }
+
+  .Toastify__close-button {
+    color: white;
+    opacity: 1;
+  }

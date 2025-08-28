@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import triangleAlert from '../../icons/triangleAlert.svg';
 import "react-toastify/dist/ReactToastify.css";
 import "./dashboard.css";
 import ENDPOINTS from "../../api/endpoints";
@@ -27,12 +28,18 @@ const Dashboard = () => {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [sortType, setSortType] = useState("performance");
+  const [popAlert, setPopAlert] = useState(null);
 
   useEffect(() => {
-    if (avgScore !== null && avgScore < 40) {
-      toast("⚠️ Low Attention Level!");
+    if (popAlert) {
+      toast("Low Attention Level", {
+        
+        className: "notification",
+        icon: <img src={ triangleAlert } alt="alert" className="w-5 h-5" />,
+        progressClassName: "toast-progress",
+      });
     }
-  }, [avgScore]);
+  }, [popAlert]);
 
   useEffect(() => {
     setLoading(true);
@@ -42,7 +49,8 @@ const Dashboard = () => {
         return res.json();
       })
       .then((data) => {
-        setStudents(data);
+        setStudents(data.students);
+        setPopAlert(data.popAlert);
         setError(null);
       })
       .catch((err) => {
@@ -424,7 +432,13 @@ const Dashboard = () => {
           </div>
         </section>
       </main>
-      <ToastContainer />
+      <ToastContainer 
+        position="bottom-right"
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
