@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import triangleAlert from '../../icons/triangleAlert.svg';
 import "react-toastify/dist/ReactToastify.css";
+import { useSocket } from "../../hooks/useSocket";
 import "./dashboard.css";
 import ENDPOINTS from "../../api/endpoints";
 
@@ -22,6 +23,41 @@ const getScoreLabel = (score) => {
 const Dashboard = () => {
   const [students, setStudents] = useState([]);
   const [avgScore, setAvgScore] = useState(null);
+
+    const handleAttentionUpdate = useCallback((data) => {
+    console.log('Processing attention update:', data);
+    
+    setStudents(prevStudents => {
+      const updatedStudents = prevStudents.map(student => {
+        if (student.studentId === data.studentId) {
+          return {
+            ...student,
+            score: data.score, 
+            lastUpdate: data.timestamp
+          };
+        }
+        return student;
+      });
+      if (!updatedStudents.find(s => s.studentId === data.studentId)) {
+        updatedStudents.push({
+          studentId: data.studentId,
+          studentName: data.analysis?.studentName || `Student ${data.studentId}`,
+          score: data.score 
+        });
+      }
+      return updatedStudents;
+    });
+  }, []);
+  useSocket(handleAttentionUpdate);
+  useEffect(() => {
+    fetch(ENDPOINTS.SCORE.AVERAGE)
+      .then((res) => res.json())
+      .then((data) => {
+        setStudents(data.students);
+        setAvgScore(data.avgScore);
+      })
+      .catch((err) => console.error(err));
+  }, []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,7 +96,6 @@ const Dashboard = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Filter students based on search and selected performance filter
   const filteredStudents = students.filter((student) => {
     const matchesSearch = student.studentName
       .toLowerCase()
@@ -75,12 +110,10 @@ const Dashboard = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Sort the filtered students based on sortType
   const sortedAndFilteredStudents = [...filteredStudents].sort((a, b) => {
     if (sortType === "name") {
       return a.studentName.localeCompare(b.studentName);
     }
-    // Default or 'performance' sort
     return b.score - a.score;
   });
 

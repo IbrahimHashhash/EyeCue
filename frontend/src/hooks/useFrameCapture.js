@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
+import { FRAME_SETTINGS } from "../config/constants";
 
 export const useFrameCapture = ({
     videoRef,
-    width,
-    height,
-    intervalMs = 10000,
-    framesPerInterval = 4,
-    onFrameCaptured 
+    width = FRAME_SETTINGS.width,
+    height = FRAME_SETTINGS.height,
+    intervalMs = FRAME_SETTINGS.intervalMs,
+    framesPerInterval = FRAME_SETTINGS.framesPerInterval,
+    onFrameCaptured
 }) => {
     const canvasRef = useRef(null);
 
@@ -22,7 +23,6 @@ export const useFrameCapture = ({
 
         const captureFrame = () => {
             const videoElement = videoRef.current;
-            
             if (!videoElement || !videoElement.videoWidth || !videoElement.videoHeight) {
                 console.warn("Video not ready for capture");
                 return;
@@ -30,13 +30,11 @@ export const useFrameCapture = ({
 
             console.log("Capturing frame...");
             context.drawImage(videoElement, 0, 0, width, height);
-            
             canvas.toBlob((blob) => {
                 if (!blob) {
                     console.warn("Failed to create blob");
                     return;
                 }
-                
                 onFrameCaptured(blob);
             }, "image/jpeg", 0.8);
         };

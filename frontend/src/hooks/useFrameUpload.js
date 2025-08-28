@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+
 export const useFrameUpload = (endpoint) => {
   const uploadFrame = useCallback(
     async (frameBlob) => {
@@ -16,12 +17,10 @@ export const useFrameUpload = (endpoint) => {
           },
           body: frameBlob,
         });
-
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
-
         const result = await response.json();
         console.log("Frame sent successfully:", result);
         return result;

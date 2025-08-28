@@ -11,7 +11,7 @@ if (!process.env.FASTAPI_URL) {
 }
 
 if (!process.env.FE_ORIGIN) {
-    throw new Error('FE_ORIGINS not defined in environment variables!');
+    throw new Error('FE_ORIGIN not defined in environment variables!');
 }
 
 

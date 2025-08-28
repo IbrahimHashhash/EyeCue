@@ -6,7 +6,6 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   CAMERA: "/",
 };
-
 export const router = createBrowserRouter([
   {
     path: ROUTES.DASHBOARD,

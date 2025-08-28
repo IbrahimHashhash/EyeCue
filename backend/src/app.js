@@ -4,6 +4,7 @@ import cors from 'cors';
 import { init } from './socket/index.js';
 import studentRoutes from './routes/student.js';
 import { PORT, FE_ORIGIN } from './config/env.js';
+import scoreRoutes from './routes/score.js';
 import { initializeDbConnection } from './services/db.js'; 
 
 const app = express();
@@ -20,7 +21,8 @@ app.use(cors({
     ]
 }));
 
-app.use('/student', studentRoutes);
+app.use('/api/score', scoreRoutes);
+app.use('/api/student', studentRoutes);
 
 init(server);
 
