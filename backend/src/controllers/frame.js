@@ -1,5 +1,6 @@
 import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
+import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
 
 export async function frameHandler(req, res) {
     const frame = req.body;
@@ -9,11 +10,23 @@ export async function frameHandler(req, res) {
     }
 
     try {
+        const timestamp = new Date().toISOString();
+        const comparasonResult = compareAgainstPrevious(clientId, frame);
+        if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
+        return res.json({
+            success: true,
+            ts: Number(timestamp),
+            clientId,
+            skipped: true,
+            reason: 'similar_to_previous',
+            similarity: comparasonResult
+        });
+        }
+
         console.log(`Frame received from FE, size: ${frame.length} bytes`);
         
         const frameBase64 = frame.toString('base64');
         const studentId = '1234';
-        const timestamp = new Date().toISOString();
         
         console.log('Processing frame for student:', studentId);
 

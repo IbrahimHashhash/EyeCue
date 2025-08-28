@@ -8,9 +8,15 @@
     "dev": "nodemon src/app.js"
   },
   "dependencies": {
+    "@tensorflow-models/blazeface": "0.1.0",
+    "@tensorflow/tfjs": "4.22.0",
+    "@tensorflow/tfjs-backend-wasm": "4.22.0",
     "axios": "1.11.0",
     "dotenv": "17.2.1",
     "express": "5.1.0",
+    "lru-cache": "11.1.0",
+    "sharp": "0.34.3",
+    "ssim.js": "3.5.0",
     "mssql": "^11.0.1",
     "mysql2": "^3.14.3",
     "socket.io": "4.8.1",
