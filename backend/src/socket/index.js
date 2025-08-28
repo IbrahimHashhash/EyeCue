@@ -1,11 +1,11 @@
 import { Server } from 'socket.io';
-import {FE_ORIGINS} from "../config/env"
+import { FE_ORIGIN } from "../config/env.js"
 let io;
 
 export function init(server) {
     io = new Server(server, {
         cors: {
-            origin: FE_ORIGINS, 
+            origin: FE_ORIGIN, 
             methods: ['GET', 'POST'],
             allowedHeaders: ['Content-Type', 'Authorization']
         },

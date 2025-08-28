@@ -3,14 +3,14 @@ import http from 'http';
 import cors from 'cors';
 import { init } from './socket/index.js';
 import studentRoutes from './routes/student.js';
-import { PORT, FE_ORIGINS } from './config/env.js';
+import { PORT, FE_ORIGIN } from './config/env.js';
 import { initializeDbConnection } from './services/db.js'; 
 
 const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin: FE_ORIGINS,
+    origin: FE_ORIGIN,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: [
         'Content-Type',
