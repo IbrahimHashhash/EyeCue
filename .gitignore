@@ -8,3 +8,4 @@ venv/
 
 *.sh
 .DS_Store
+bash

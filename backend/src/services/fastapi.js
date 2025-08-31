@@ -1,6 +1,5 @@
 import axios from "axios";
-import { ENDPOINTS } from "./endpoints.js";
-
+import {ENDPOINTS} from "../api/endpoints.js"
 export async function processFrame(frameBase64, studentId, timestamp) {
   try {
     const currentTimestamp = timestamp || new Date().toISOString();
