@@ -3,7 +3,6 @@ from collections import deque
 import threading
 
 class BatchManager:
-    """Handles batching of frames for multiple students."""
 
     def __init__(self, batch_size: int = 4):
         self.batch_size = batch_size
@@ -11,7 +10,6 @@ class BatchManager:
         self._lock = threading.RLock()
 
     def add_frame(self, student_id: str, frame_data: Dict) -> Dict:
-        """Add a frame to the student's batch and return batch status."""
         with self._lock:
             if student_id not in self.buffers:
                 self.buffers[student_id] = deque(maxlen=self.batch_size)
@@ -20,7 +18,6 @@ class BatchManager:
             buffer.append(frame_data)
 
             if len(buffer) >= self.batch_size:
-                # Batch complete: remove and return
                 complete_batch = list(buffer)
                 self.buffers.pop(student_id, None)
                 return {
@@ -36,7 +33,6 @@ class BatchManager:
                 }
 
     def remove_student(self, student_id: str) -> None:
-        """Remove an incomplete batch for a student."""
         with self._lock:
             self.buffers.pop(student_id, None)
 

@@ -23,7 +23,6 @@ class FrameProcessingService:
                 pass
 
     def process_base64_frame(self, frame_base64: str, timestamp: str) -> Dict:
-        """Decode base64 frame and process with face mesh."""
         if self._is_closed:
             raise RuntimeError("Frame processing service is closed")
 
@@ -40,7 +39,6 @@ class FrameProcessingService:
         return frame_result
 
     def process_frame_bytes(self, image_bytes: bytes, timestamp: str) -> Dict:
-        """Process raw image bytes and return face metrics."""
         if self._is_closed:
             raise RuntimeError("Frame processing service is closed")
 

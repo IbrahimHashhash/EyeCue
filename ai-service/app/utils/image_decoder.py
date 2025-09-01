@@ -4,11 +4,10 @@ from ml_logic.face_mesh_pipeline import FaceMeshError
 
 class ImageDecoder:
     
-    MIN_FRAME_DIMENSION = 100  # Minimum width/height in pixels
+    MIN_FRAME_DIMENSION = 100 
 
     @staticmethod
     def decode_image_bytes(image_data: bytes) -> np.ndarray:
-        """Decode bytes into a valid OpenCV BGR frame."""
         try:
             nparr = np.frombuffer(image_data, np.uint8)
             if nparr.size == 0:

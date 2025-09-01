@@ -11,7 +11,6 @@ from endpoints.attention import create_attention_router
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load environment variables
 load_dotenv()
 PORT = int(os.getenv("PORT", 8000))
 
@@ -36,10 +35,8 @@ def create_application() -> FastAPI:
         lifespan=lifespan
     )
 
-    # Include routers
     app.include_router(create_attention_router(), prefix="/attention", tags=["attention"])
 
-    # Health endpoint
     @app.get("/health")
     def health(request: Request):
         svc = getattr(request.app.state, "attention_service", None)

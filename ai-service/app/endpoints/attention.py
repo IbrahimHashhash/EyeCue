@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from ml_logic.face_mesh_pipeline import FaceMeshError
 from services.attention_analysis import AttentionAnalysisService
 
-# Thread pool for CPU-bound operations
 _executor = ThreadPoolExecutor(max_workers=4)
 
 class FrameRequest(BaseModel):
@@ -22,7 +21,6 @@ class AttentionResponse(BaseModel):
     processingTimestamp: Dict = {}
 
 def get_attention_service(request: Request) -> AttentionAnalysisService:
-    """Dependency to retrieve attention service from app state."""
     svc = getattr(request.app.state, "attention_service", None)
     if svc is None:
         raise RuntimeError("Attention service not initialized")
@@ -32,11 +30,9 @@ async def analyze_frame(
     request: FrameRequest,
     attention_service: AttentionAnalysisService
 ) -> AttentionResponse:
-    """Analyze a single frame using the attention service."""
 
     loop = asyncio.get_running_loop()
     try:
-        # Run CPU-bound analysis in thread pool
         result = await loop.run_in_executor(
             _executor,
             attention_service.analyze_frame_from_base64,
@@ -68,7 +64,6 @@ async def analyze_frame(
     )
 
 def create_attention_router() -> APIRouter:
-    """Create APIRouter for attention endpoints with dependency injection."""
     router = APIRouter()
 
     @router.post("/analyze", response_model=AttentionResponse)
