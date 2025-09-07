@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import FastAPI
 from services.attention_analysis import AttentionAnalysisService
 from services.frame_processor import FrameProcessingService
+from services.calibration_storage import CalibrationStorageService
 from ml_logic.attention_classifier import AttentionClassifier
 
 logger = logging.getLogger(__name__)
@@ -14,9 +15,12 @@ class ServiceInitializer:
     def create_attention_service() -> AttentionAnalysisService:
         frame_service = FrameProcessingService()
         attention_classifier = AttentionClassifier()
+        calibration_storage = CalibrationStorageService()
+        
         return AttentionAnalysisService(
             frame_service=frame_service,
-            attention_classifier=attention_classifier
+            attention_classifier=attention_classifier,
+            calibration_storage=calibration_storage
         )
 
 def init_app(app: FastAPI) -> None:
