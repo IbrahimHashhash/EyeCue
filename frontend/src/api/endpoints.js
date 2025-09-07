@@ -10,6 +10,7 @@ const ENDPOINTS = {
   SCORE: {
     AVERAGE: `${API_BASE}/score/average-score?sessionId=${SESSION_ID}`,
   },
+  
   SOCKET: {
     MAIN: BACKEND_URL,
   },

@@ -1,76 +1,68 @@
 import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
+import { recordAttentionData } from '../services/sessionService.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
 
 export async function frameHandler(req, res) {
+   const frame = req.file?.buffer;
+   const studentId = req.body.studentId;
+   const timestamp = new Date().toISOString();
 
-    const frame = req.file?.buffer;
-    const studentId = req.body.studentId;
-    const timestamp = new Date().toISOString();
+   if (!frame?.length) {
+       return res.status(400).send('No frame received');
+   }
 
-    if (!frame?.length) {
-        return res.status(400).send('No frame received');
-    }
+   if (!studentId) {
+       return res.status(400).send('No ID received');
+   }
 
-    if (!studentId) {
-        return res.status(400).send('No ID received');
-    }
+   try {
+       const comparasonResult = await compareAgainstPrevious(studentId, frame);
+       if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
+           console.log("Frame received is similar to the last one !");
 
-    try {
-        const comparasonResult = await compareAgainstPrevious(studentId, frame);
-        if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
-            console.log("Frame received is similar to the last one !");
+           return res.json({
+               success: true,
+               ts: Number(timestamp),
+               clientId: studentId,
+               skipped: true,
+               reason: 'similar_to_previous',
+               similarity: comparasonResult
+           });
+       }
 
-            return res.json({
-                success: true,
-                ts: Number(timestamp),
-                clientId: studentId,
-                skipped: true,
-                reason: 'similar_to_previous',
-                similarity: comparasonResult
-            });
-        }
+       console.log(`Frame received from FE, size: ${frame.length} bytes`);
 
-        console.log(`Frame received from FE, size: ${frame.length} bytes`);
-        
-        const frameBase64 = frame.toString('base64');
+       const frameBase64 = frame.toString('base64');
+       console.log('Processing frame for student:', studentId);
+       const analysisResult = await processFrame(frameBase64, studentId, timestamp);
 
-        console.log('Processing frame for student:', studentId);
+       recordAttentionData(studentId, timestamp, analysisResult.attentionLabel);
 
-        const analysisResult = await processFrame(frameBase64, studentId, timestamp);
+       console.log('Received analysis from FastAPI:', analysisResult);
 
-        console.log('Received analysis from FastAPI:', analysisResult);
+       const io = getIO();
 
-        const io = getIO();
+       io.emit('attentionUpdate', {
+           studentId: analysisResult.studentId,
+           label: analysisResult.label,
+           analysis: analysisResult,
+           timestamp: timestamp
+       });
 
-        io.emit('attentionUpdate', {
-            studentId: analysisResult.studentId,
-            label: analysisResult.label,
-            analysis: analysisResult,
-            timestamp: timestamp
-        });
+       return res.status(200).json({
+           success: true,
+           analysis: analysisResult,
+           studentId: studentId,
+           timestamp: timestamp
+       });
 
-        return res.status(200).json({ 
-            success: true, 
-            analysis: analysisResult,
-            studentId: studentId,
-            timestamp: timestamp
-        });
-
-    } catch (error) {
-        console.error('Error processing frame:', error.message);
-
-        if (error.response) {
-            console.error('FastAPI error response:', {
-                status: error.response.status,
-                data: error.response.data
-            });
-        }
-
-        return res.status(500).json({ 
-            success: false, 
-            error: 'Failed to process frame',
-            details: error.response?.data || error.message
-        });
-    }
+   } catch (error) {
+       console.error('Error processing frame:', error.message);
+       return res.status(500).json({
+           success: false,
+           error: 'Failed to process frame',
+           details: error.message
+       });
+   }
 }
