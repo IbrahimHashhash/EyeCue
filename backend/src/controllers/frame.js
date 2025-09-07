@@ -3,40 +3,49 @@ import { getIO } from '../socket/index.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
 
 export async function frameHandler(req, res) {
-    const frame = req.body;
+
+    const frame = req.file?.buffer;
+    const studentId = req.body.studentId;
+    const timestamp = new Date().toISOString();
 
     if (!frame?.length) {
         return res.status(400).send('No frame received');
     }
 
+    if (!studentId) {
+        return res.status(400).send('No ID received');
+    }
+
     try {
-        const timestamp = new Date().toISOString();
-        const comparasonResult = compareAgainstPrevious(clientId, frame);
+        const comparasonResult = await compareAgainstPrevious(studentId, frame);
         if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
-        return res.json({
-            success: true,
-            ts: Number(timestamp),
-            clientId,
-            skipped: true,
-            reason: 'similar_to_previous',
-            similarity: comparasonResult
-        });
+            console.log("Frame received is similar to the last one !");
+
+            return res.json({
+                success: true,
+                ts: Number(timestamp),
+                clientId: studentId,
+                skipped: true,
+                reason: 'similar_to_previous',
+                similarity: comparasonResult
+            });
         }
 
         console.log(`Frame received from FE, size: ${frame.length} bytes`);
         
         const frameBase64 = frame.toString('base64');
-        const studentId = '1234';
-        
+
         console.log('Processing frame for student:', studentId);
 
         const analysisResult = await processFrame(frameBase64, studentId, timestamp);
 
         console.log('Received analysis from FastAPI:', analysisResult);
+
         const io = getIO();
+
         io.emit('attentionUpdate', {
             studentId: analysisResult.studentId,
-            score: analysisResult.attentionScore || analysisResult.score,
+            label: analysisResult.label,
             analysis: analysisResult,
             timestamp: timestamp
         });

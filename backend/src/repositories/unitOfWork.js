@@ -5,6 +5,7 @@ import FrameLogRepository from "./frameLogRepository.js";
 import SessionRepository from "./sessionRepository.js";
 import AttentionMetricRepository from "./attentionMetricRepository.js";
 import StudentRepository from "./studentRepository.js";
+import SessionParticipantRepository from "./sessionParticipantsRepository.js"
 
 export default class UnitOfWork {
   constructor() {
@@ -19,5 +20,6 @@ export default class UnitOfWork {
     this.sessions = new SessionRepository(this.pool);
     this.attentionMetrics = new AttentionMetricRepository(this.pool);
     this.students = new StudentRepository(this.pool);
+    this.sessionParticipants = new SessionParticipantRepository(this.pool);
   }
 }

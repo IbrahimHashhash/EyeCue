@@ -1,13 +1,14 @@
 import express from 'express';
+import multer from 'multer';
 import { frameHandler } from '../controllers/frame.js';
 
 const router = express.Router();
+const upload = multer();
 
 router.post(
   '/frame',
-  express.raw({ type: '*/*', limit: '5mb' }),
+  upload.single('frame'),
   frameHandler
 );
-
 
 export default router;

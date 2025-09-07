@@ -7,6 +7,7 @@ import { initTF } from './services/check-similarity/tf-init.js';
 import { PORT, FE_ORIGIN } from './config/env.js';
 import scoreRoutes from './routes/score.js';
 import { initializeDbConnection } from './services/db.js'; 
+import UnitOfWork from './repositories/unitOfWork.js'
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,11 @@ init(server);
 (async () => {
     try {
         await initializeDbConnection();
+
+        const uow = new UnitOfWork();
+        await uow.start();
+        app.locals.uow = uow;
+
         server.listen(PORT, () => {
             console.log(`Server running on PORT: ${PORT}`);
         });

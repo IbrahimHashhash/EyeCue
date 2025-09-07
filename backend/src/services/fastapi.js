@@ -4,14 +4,14 @@ export async function processFrame(frameBase64, studentId, timestamp) {
   try {
     const currentTimestamp = timestamp || new Date().toISOString();
     console.log("Sending to FastAPI:", {
-      endpoint: ENDPOINTS.ATTENTION.ANALYZE,
+      endpoint: ENDPOINTS.ATTENTION_ANALYZE,
       studentId,
       frameDataLength: frameBase64.length,
       timestamp: currentTimestamp,
     });
 
     const response = await axios.post(
-      ENDPOINTS.ATTENTION.ANALYZE,
+      ENDPOINTS.ATTENTION_ANALYZE,
       {
         studentId,
         frameBase64,
