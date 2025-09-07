@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from core.initialization import init_app, shutdown_app
 from endpoints.attention import create_attention_router
 
-# Logging configuration
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -35,7 +34,7 @@ def create_application() -> FastAPI:
         lifespan=lifespan
     )
 
-    app.include_router(create_attention_router(), prefix="/attention", tags=["attention"])
+    app.include_router(create_attention_router(), prefix="/api/attention", tags=["attention"])
 
     @app.get("/health")
     def health(request: Request):

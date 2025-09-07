@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from pydantic import BaseModel
-from typing import Dict, Optional
+from typing import Dict, Literal
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,12 +11,15 @@ _executor = ThreadPoolExecutor(max_workers=4)
 
 class FrameRequest(BaseModel):
     studentId: str
+    frameId: str
     frameBase64: str
     timestamp: str
 
 class AttentionResponse(BaseModel):
     studentId: str
-    attentionScore: Optional[float] = None
+    frameId: str
+    attentionLabel: Literal["attentive", "inattentive"]
+    faceDetected: bool
     status: str
     processingTimestamp: Dict = {}
 
@@ -37,6 +40,7 @@ async def analyze_frame(
             _executor,
             attention_service.analyze_frame_from_base64,
             request.studentId,
+            request.frameId,
             request.frameBase64,
             request.timestamp
         )
@@ -58,7 +62,9 @@ async def analyze_frame(
 
     return AttentionResponse(
         studentId=request.studentId,
-        attentionScore=result.get("attention_percentage") if result.get("is_batch_complete", False) else None,
+        frameId=request.frameId,
+        attentionLabel=result.get("attention_label", "inattentive"),
+        faceDetected=result.get("face_detected", False),
         status=result.get("status", "unknown"),
         processingTimestamp=result.get("processing_timestamp", {})
     )
