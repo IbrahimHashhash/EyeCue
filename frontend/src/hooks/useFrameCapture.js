@@ -7,10 +7,15 @@ export const useFrameCapture = ({
   height = FRAME_SETTINGS.height,
   intervalMs = FRAME_SETTINGS.intervalMs,
   onFrameCaptured,
+  enabled = true, 
 }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     if (!canvasRef.current) {
       canvasRef.current = document.createElement("canvas");
     }
@@ -45,5 +50,5 @@ export const useFrameCapture = ({
     const interval = setInterval(captureFrame, intervalMs);
 
     return () => clearInterval(interval);
-  }, [videoRef, width, height, intervalMs, onFrameCaptured]);
+  }, [videoRef, width, height, intervalMs, onFrameCaptured, enabled]);
 };

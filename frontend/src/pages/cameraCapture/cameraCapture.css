@@ -2,29 +2,138 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px;
+  padding: 24px;
+  gap: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.main-content {
+  background: transparent;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.video-container {
+  position: relative;
 }
 
 .video-wrapper {
   width: 100%;
-  max-width: 500px;
-  aspect-ratio: 3/4;
-  background-color: #000;
+  max-width: 480px;
+  aspect-ratio: 3 / 4;
+  background: #000;
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .video-wrapper video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 12px;
+  display: block;
+  background: #000;
+}
+
+.capture-indicator {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(37, 99, 235, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 280px;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.info-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.info-card h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.info-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .content-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .sidebar-right {
+    width: 100%;
+    max-width: 480px;
+  }
 }
 
 @media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+  
   .video-wrapper {
-    max-width: 90%;
-    aspect-ratio: 9/16;
+    max-width: 320px;
+  }
+  
+  .capture-indicator {
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .sidebar-right {
+    min-width: auto;
   }
 }
