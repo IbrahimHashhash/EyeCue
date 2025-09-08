@@ -6,8 +6,11 @@ import studentRoutes from './routes/student.js';
 import { initTF } from './services/check-similarity/tf-init.js';
 import { PORT, FE_ORIGIN } from './config/env.js';
 import scoreRoutes from './routes/score.js';
-import { initializeDbConnection } from './services/db.js'; 
-import UnitOfWork from './repositories/unitOfWork.js'
+import { initializeDbConnection } from './services/db.js';
+import UnitOfWork from './repositories/unitOfWork.js';
+import createAuthRoutes from './routes/auth.js';
+import StudentRepository from './repositories/studentRepository.js';
+import TeacherRepository from './repositories/teacherRepository.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -23,6 +26,8 @@ app.use(cors({
     ]
 }));
 
+app.use(express.json());
+
 app.use('/api/score', scoreRoutes);
 app.use('/api/student', studentRoutes);
 
@@ -37,6 +42,13 @@ init(server);
         await uow.start();
         app.locals.uow = uow;
 
+        const pool = uow.pool || uow._pool || uow.getPool();
+
+        const studentRepo = new StudentRepository(pool);
+        const teacherRepo = new TeacherRepository(pool);
+
+        app.use('/api/auth', createAuthRoutes(studentRepo, teacherRepo));
+
         server.listen(PORT, () => {
             console.log(`Server running on PORT: ${PORT}`);
         });
@@ -44,4 +56,5 @@ init(server);
         console.error("Failed to connect DB, cannot start server:", err);
         process.exit(1);
     }
+
 })();

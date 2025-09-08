@@ -1,40 +1,41 @@
-import { useCallback } from "react";
-import { STUDENT_ID } from "../mocks/ids.js";
+import { useCallback, useState, useEffect } from "react";
+
+const getUserFromStorage = () => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
 
 export const useFrameUpload = (endpoint) => {
+  const [studentId, setStudentId] = useState(null);
+  const [studentName, setStudentName] = useState(null);
+
+  useEffect(() => {
+    const user = getUserFromStorage();
+    if (user) {
+      setStudentId(user.id);
+      setStudentName(user.name);
+    }
+  }, []);
+
   const uploadFrame = useCallback(
     async (frameBlob) => {
-      try {
-        if (!endpoint) {
-          throw new Error("No endpoint provided");
-        }
-        console.log(`Sending frame to ${endpoint}: ${frameBlob.size} bytes`);
+      const formData = new FormData();
+      formData.append("frame", frameBlob);
+      formData.append("studentId", studentId);
+      formData.append("studentName", studentName);
 
-        const formData = new FormData();
-        formData.append("frame", frameBlob);
-        formData.append("studentId", STUDENT_ID);
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+      });
 
-        const response = await fetch(endpoint, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Server error: ${response.status} - ${errorText}`);
-        }
-        const result = await response.json();
-        console.log("Frame sent successfully:", result);
-        return result;
-      } catch (err) {
-        console.error("Failed to send frame:", err.message);
-        throw err;
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
       }
+      return response.json();
     },
-    [endpoint]
+    [endpoint, studentId, studentName]
   );
-  return {
-    endpoint,
-    uploadFrame,
-  };
+
+  return { uploadFrame, studentId, studentName };
 };

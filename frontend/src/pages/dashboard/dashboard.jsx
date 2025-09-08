@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
+import StudentCard from "./studentCard";
+import DebugView from "./debug";
 import "./dashboard.css";
 import {
-  getAttentionClass,
-  getAttentionGradient,
   getSessionDuration,
   filterStudents,
   sortStudents,
@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [sortType, setSortType] = useState("attention");
   const [sessionDuration, setSessionDuration] = useState("00:00");
+  const [currentView, setCurrentView] = useState("overview"); 
 
   const handleAttentionUpdate = useCallback((data) => {
     console.log('Real-time attention update:', data);
@@ -98,7 +99,10 @@ const Dashboard = () => {
         <nav className="sidebar-nav">
           <div className="nav-group">
             <span className="nav-label">Overview</span>
-            <button className="nav-item active">
+            <button 
+              className={`nav-item ${currentView === "overview" ? "active" : ""}`}
+              onClick={() => setCurrentView("overview")}
+            >
               <div className="nav-icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -119,6 +123,30 @@ const Dashboard = () => {
               <span>Dashboard</span>
               <div className="nav-indicator"></div>
             </button>
+            <button 
+              className={`nav-item ${currentView === "debug" ? "active" : ""}`}
+              onClick={() => setCurrentView("debug")}
+            >
+              <div className="nav-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M12 1v6m0 6v6"></path>
+                  <path d="m21 12-6-3-6 3-6-3"></path>
+                </svg>
+              </div>
+              <span>Summary Debug</span>
+              <div className="nav-indicator"></div>
+            </button>
           </div>
         </nav>
         <div className="sidebar-footer">
@@ -136,11 +164,16 @@ const Dashboard = () => {
           <div className="header-top">
             <div className="header-title-section">
               <h1 className="dashboard-title">
-                Attention
-                <span className="title-accent">Dashboard</span>
+                {currentView === "overview" ? "Attention" : "Summary"}
+                <span className="title-accent">
+                  {currentView === "overview" ? "Dashboard" : "Debug"}
+                </span>
               </h1>
               <p className="dashboard-subtitle">
-                Monitor student attention states in real-time
+                {currentView === "overview" 
+                  ? "Monitor student attention states in real-time"
+                  : "Detailed analytics and monitoring data"
+                }
               </p>
             </div>
             <div className="header-controls">
@@ -217,24 +250,6 @@ const Dashboard = () => {
                     >
                       Currently Inattentive
                     </div>
-                    <div
-                      className={`sort-dropdown-item ${selectedFilter === "high" ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedFilter("high");
-                        setIsSortDropdownOpen(false);
-                      }}
-                    >
-                      High Attention (80%+)
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${selectedFilter === "low" ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedFilter("low");
-                        setIsSortDropdownOpen(false);
-                      }}
-                    >
-                      Low Attention (&lt;50%)
-                    </div>
                   </div>
                 )}
               </div>
@@ -268,93 +283,31 @@ const Dashboard = () => {
           </div>
         </header>
         <section className="content-body">
-          <div className="students-grid">
-            {sortedAndFilteredStudents.length === 0 ? (
-              <div className="no-students">
-                <div className="no-students-icon">👥</div>
-                <h3>No Students Found</h3>
-                <p>Start a camera session to see real-time attention data</p>
-              </div>
-            ) : (
-              sortedAndFilteredStudents.map((student, index) => (
-                <div
-                  key={student.studentId}
-                  className={`student-card ${getAttentionClass(student)} ${isSessionActive ? 'live' : ''}`}
-                  style={{
-                    animationDelay: `${index * 0.1}s`,
-                    background: getAttentionGradient(student.attentivePercentage || 0),
-                  }}
-                >
-                  <div className="card-glow"></div>
-                  <div className="card-header">
-                    <div className="student-avatar">
-                      <span className="avatar-text">
-                        {student.studentName
-                          .split(" ")
-                          .map((name) => name[0])
-                          .join("")
-                          .slice(0, 2)}
-                      </span>
-                    </div>
-                    <div className="student-details">
-                      <h3 className="student-name">{student.studentName}</h3>
-                      <span className="student-id">#{student.studentId}</span>
-                      {isSessionActive && (
-                        <span className={`attention-badge ${student.currentState || 'unknown'}`}>
-                          {student.currentState ? student.currentState.toUpperCase() : 'WAITING...'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="attention-section">
-                    <div className="attention-percentage">
-                      <span className="percentage-value">{student.attentivePercentage || 0}</span>
-                      <span className="percentage-unit">%</span>
-                      <span className="percentage-label">Attentive Time</span>
-                    </div>
-                    <div className="attention-breakdown">
-                      <div className="breakdown-item attentive">
-                        <span className="breakdown-label">Attentive</span>
-                        <span className="breakdown-value">{student.attentiveCount || 0}</span>
-                      </div>
-                      <div className="breakdown-item inattentive">
-                        <span className="breakdown-label">Inattentive</span>
-                        <span className="breakdown-value">{student.inattentiveCount || 0}</span>
-                      </div>
-                    </div>
-                    {student.attentionStates && student.attentionStates.length > 1 && (
-                      <div className="mini-timeline">
-                        <span className="timeline-label">Recent:</span>
-                        <div className="timeline-bars">
-                          {student.attentionStates.slice(-10).map((isAttentive, index) => (
-                            <div
-                              key={index}
-                              className={`timeline-bar ${isAttentive ? 'attentive' : 'inattentive'}`}
-                              title={isAttentive ? 'Attentive' : 'Inattentive'}
-                            ></div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {isSessionActive && student.totalUpdates && (
-                      <div className="realtime-stats">
-                        <div className="stat">
-                          <span className="stat-label">Updates:</span>
-                          <span className="stat-value">{student.totalUpdates}</span>
-                        </div>
-                        {student.lastUpdate && (
-                          <div className="stat">
-                            <span className="stat-label">Last:</span>
-                            <span className="stat-value">{new Date(student.lastUpdate).toLocaleTimeString()}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+          {currentView === "overview" ? (
+            <div className="simple-students-grid">
+              {sortedAndFilteredStudents.length === 0 ? (
+                <div className="no-students">
+                  <div className="no-students-icon">👥</div>
+                  <h3>No Students Found</h3>
+                  <p>Start a camera session to see real-time attention data</p>
                 </div>
-              ))
-            )}
-          </div>
+              ) : (
+                sortedAndFilteredStudents.map((student, index) => (
+                  <StudentCard 
+                    key={student.studentId} 
+                    student={student} 
+                    index={index} 
+                  />
+                ))
+              )}
+            </div>
+          ) : (
+            <DebugView 
+              students={students}
+              isSessionActive={isSessionActive}
+              sortedAndFilteredStudents={sortedAndFilteredStudents}
+            />
+          )}
         </section>
       </main>
       <ToastContainer

@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "../config/env";
-import { SESSION_ID } from "../mocks/ids.js"
 
+const SESSION_ID = 6;
 const API_BASE = `${BACKEND_URL}/api`;
 
 const ENDPOINTS = {
@@ -10,7 +10,9 @@ const ENDPOINTS = {
   SCORE: {
     AVERAGE: `${API_BASE}/score/average-score?sessionId=${SESSION_ID}`,
   },
-  
+  AUTH: {
+    GUEST_LOGIN: `${API_BASE}/auth/guest-login`,
+  },
   SOCKET: {
     MAIN: BACKEND_URL,
   },

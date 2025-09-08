@@ -217,17 +217,6 @@
   gap: 12px;
 }
 
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #7c77c6, #ff77c6);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-}
 
 .user-info {
   display: flex;
@@ -498,50 +487,6 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
-}
-
-.student-avatar {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.student-avatar::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #7c77c6, #ff77c6, #78c6c6, #7c77c6);
-  border-radius: 50%;
-  z-index: -1;
-  animation: avatarRotate 3s linear infinite;
-}
-
-@keyframes avatarRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.avatar-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: white;
-}
-
-.avatar-ring {
-  position: absolute;
-  inset: -4px;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #7c77c6, #ff77c6) border-box;
-  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  mask-composite: xor;
 }
 
 .smaller-icon {
@@ -914,14 +859,8 @@
     font-size: 36px;
   }
   
-  .student-avatar {
-    width: 56px;
-    height: 56px;
-  }
-  
-  .avatar-text {
-    font-size: 18px;
-  }
+ 
+
 }
 
   .notification {
@@ -1212,4 +1151,130 @@ body {
 
 .student-card.inattentive {
   border-left: 4px solid #ef4444;
+}
+
+/* Simple Students Grid */
+.simple-students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Simple Student Card */
+.simple-student-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: cardSlideIn 0.6s ease-out both;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+}
+
+.simple-student-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.simple-card-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.simple-student-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.simple-student-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.simple-attention-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+/* Debug card styling */
+.debug-card {
+  border: 2px solid transparent;
+}
+
+.debug-card.attentive {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.debug-card.inattentive {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Debug container */
+.debug-container {
+  flex: 1;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+  padding: 0;
+}
+
+.debug-header {
+  padding: 40px 48px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive design for simple cards */
+@media (max-width: 768px) {
+  .simple-students-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .simple-student-card {
+    padding: 20px;
+    min-height: 100px;
+  }
+  
+  .simple-card-content {
+    gap: 16px;
+  }
+  
+  .simple-student-name {
+    font-size: 18px;
+  }
+  
+  .simple-attention-label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-student-card {
+    padding: 16px;
+  }
+  
+  .simple-card-content {
+    gap: 12px;
+  }
+  
+  .simple-student-name {
+    font-size: 16px;
+  }
 }

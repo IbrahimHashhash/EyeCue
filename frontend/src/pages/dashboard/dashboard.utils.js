@@ -72,7 +72,7 @@ export const processStudentUpdate = (prevStudents, data, isAttentive, attentionL
     if (!updatedStudents.find(s => s.studentId === studentId)) {
         updatedStudents.push({
             studentId: studentId,
-            studentName: data.analysis?.studentName || `Student ${studentId}`,
+            studentName: data.studentName || data.analysis?.studentName || `Student ${studentId}`,
             currentState: isAttentive ? 'attentive' : 'inattentive',
             attentionLabel: attentionLabel,
             lastUpdate: timestamp,

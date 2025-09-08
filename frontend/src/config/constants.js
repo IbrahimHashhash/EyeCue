@@ -11,3 +11,20 @@ export const SOCKET_SETTINGS = {
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
 };
+
+export const AUTH_CONSTANTS = {
+  STORAGE_KEY: "user",
+  ROUTES: {
+    TEACHER: "/dashboard",
+    STUDENT: "/camera-capture",
+  },
+  ROLES: {
+    TEACHER: "teacher",
+    STUDENT: "student",
+  },
+};
+
+export const FORM_DEFAULTS = {
+  name: "",
+  role: "student",
+};
