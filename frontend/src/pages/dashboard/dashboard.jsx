@@ -20,7 +20,6 @@ const Dashboard = () => {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
-  const [totalFramesProcessed, setTotalFramesProcessed] = useState(0);
   const [sessionStats, setSessionStats] = useState({
     totalAttentiveFrames: 0,
     totalInattentiveFrames: 0,
@@ -47,7 +46,6 @@ const Dashboard = () => {
     const timestamp = data.timestamp;
     const now = new Date();
     setLastUpdate(now.toLocaleTimeString());
-    setTotalFramesProcessed(prev => prev + 1);
     if (!sessionStartTime) {
       setSessionStartTime(now);
     }
@@ -68,7 +66,6 @@ const Dashboard = () => {
     setIsSessionActive(true);
     setSessionStartTime(new Date());
     setStudents([]);
-    setTotalFramesProcessed(0);
     setSessionStats({
       totalAttentiveFrames: 0,
       totalInattentiveFrames: 0,
@@ -293,9 +290,6 @@ const Dashboard = () => {
                 <div className="session-stats">
                   <span className="stat-item">
                     <strong>Duration:</strong> {sessionDuration}
-                  </span>
-                  <span className="stat-item">
-                    <strong>Frames:</strong> {totalFramesProcessed}
                   </span>
                   <span className="stat-item">
                     <strong>Overall Attention:</strong> {sessionStats.attentivePercentage}%
