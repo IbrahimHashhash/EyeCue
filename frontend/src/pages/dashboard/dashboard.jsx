@@ -1,11 +1,10 @@
-// dashboard.jsx - Updated version with SessionControl
 import { useEffect, useState, useCallback } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
 import StudentCard from "./studentCard";
 import DebugView from "./debug";
-import SessionControl from "../../components/SessionControl"; // Add this import
+import SessionControl from "../../components/sessionControl"; 
 import "./dashboard.css";
 import {
   getSessionDuration,
@@ -33,7 +32,7 @@ const Dashboard = () => {
   const [sortType, setSortType] = useState("attention");
   const [sessionDuration, setSessionDuration] = useState("00:00");
   const [currentView, setCurrentView] = useState("overview");
-  const [currentSessionId, setCurrentSessionId] = useState(null); // Add this state
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   const handleAttentionUpdate = useCallback((data) => {
     if (!currentSessionId) {
@@ -63,13 +62,11 @@ const Dashboard = () => {
 
   useSocket(handleAttentionUpdate);
 
-  // Add session control handlers
   const handleSessionStart = (sessionId) => {
     console.log('Session started:', sessionId);
     setCurrentSessionId(sessionId);
     setIsSessionActive(true);
     setSessionStartTime(new Date());
-    // Reset session data
     setStudents([]);
     setTotalFramesProcessed(0);
     setSessionStats({
@@ -100,7 +97,6 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="background-pattern"></div>
-      {/* ... existing sidebar and main content ... */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
