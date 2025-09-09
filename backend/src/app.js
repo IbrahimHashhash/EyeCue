@@ -4,7 +4,7 @@ import http from 'http';
 import cors from 'cors';
 import { init } from './socket/index.js';
 import studentRoutes from './routes/student.js';
-import sessionRoutes from './routes/session.js'; // Add this import
+import sessionRoutes from './routes/session.js';
 import { initTF } from './services/check-similarity/tf-init.js';
 import { PORT, FE_ORIGIN } from './config/env.js';
 import scoreRoutes from './routes/score.js';
@@ -32,7 +32,7 @@ app.use(express.json());
 
 app.use('/api/score', scoreRoutes);
 app.use('/api/student', studentRoutes);
-app.use('/api/session', sessionRoutes); // Add this line
+app.use('/api/session', sessionRoutes);
 
 await initTF();
 init(server);
