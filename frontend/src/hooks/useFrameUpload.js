@@ -8,12 +8,14 @@ const getUserFromStorage = () => {
 export const useFrameUpload = (endpoint) => {
   const [studentId, setStudentId] = useState(null);
   const [studentName, setStudentName] = useState(null);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   useEffect(() => {
     const user = getUserFromStorage();
     if (user) {
       setStudentId(user.id);
       setStudentName(user.name);
+      setCurrentSessionId(user.currentSessionId || null);
     }
   }, []);
 
@@ -23,6 +25,7 @@ export const useFrameUpload = (endpoint) => {
       formData.append("frame", frameBlob);
       formData.append("studentId", studentId);
       formData.append("studentName", studentName);
+      formData.append("sessionId", currentSessionId);
 
       const response = await fetch(endpoint, {
         method: "POST",

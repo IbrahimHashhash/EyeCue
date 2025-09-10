@@ -2,12 +2,14 @@ import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
+import { storeFrame } from '../services/frame.js';
 
 export async function frameHandler(req, res) {
     const frame = req.file?.buffer;
     const studentId = req.body.studentId;
     const studentName = req.body.studentName;
     const timestamp = new Date().toISOString();
+    const sessionId = req.body.sessionId || req.get('X-Session-Id');
 
     if (!frame?.length) {
         return res.status(400).send('No frame received');
@@ -15,6 +17,10 @@ export async function frameHandler(req, res) {
 
     if (!studentId) {
         return res.status(400).send('No ID received');
+    }
+
+    if (!sessionId) {
+        return res.status(400).json({ success: false, message: 'sessionId required' });
     }
 
     try {
@@ -50,6 +56,15 @@ export async function frameHandler(req, res) {
             label: analysisResult.label,
             analysis: analysisResult,
             timestamp: timestamp
+        });
+
+
+        await storeFrame({
+            sessionId: sessionId,
+            studentId: studentId,
+            studentName: studentName,
+            timestamp: timestamp,
+            similarity_score: comparasonResult.scores.ssim
         });
 
         return res.status(200).json({

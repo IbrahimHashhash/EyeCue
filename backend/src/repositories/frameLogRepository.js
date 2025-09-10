@@ -19,4 +19,21 @@ export default class FrameLogRepository extends BaseRepository {
             `);
         return result.recordset;
     }
+   async create(entry) {
+    const result = await this.pool
+      .request()
+      .input("session_id", entry.session_id)
+      .input("student_id", entry.student_id)
+      .input("timestamp", entry.timestamp)
+      .input("similarity_score", entry.similarity_score)
+      .input("is_significant", entry.is_significant)
+      .query(`
+        INSERT INTO ${FrameLog.tableName}
+          (session_id, student_id, [timestamp], similarity_score, is_significant)
+        OUTPUT INSERTED.*
+        VALUES (@session_id, @student_id, @timestamp, @similarity_score, @is_significant)
+      `);
+    return result.recordset[0];
+  }
+          
 }
