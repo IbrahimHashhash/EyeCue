@@ -2,8 +2,11 @@ import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
+import { updateStudent } from '../services/studentState.js';
+import { computeAlertFlag } from '../services/alert.js';
 
 export async function frameHandler(req, res) {
+
     const frame = req.file?.buffer;
     const studentId = req.body.studentId;
     const studentName = req.body.studentName;
@@ -35,8 +38,14 @@ export async function frameHandler(req, res) {
         console.log(`Frame received from FE, size: ${frame.length} bytes`);
 
         const frameBase64 = frame.toString('base64');
+
         console.log('Processing frame for student:', studentId);
+
         const analysisResult = await processFrame(frameBase64, studentId, timestamp);
+
+        updateStudent(studentId, analysisResult.attentionLabel);
+
+        const alertFlag = computeAlertFlag();
 
         recordAttentionData(studentId, timestamp, analysisResult.attentionLabel);
 
@@ -46,8 +55,9 @@ export async function frameHandler(req, res) {
 
         io.emit('attentionUpdate', {
             studentId: analysisResult.studentId,
+            alert: alertFlag,
             studentName: studentName,
-            label: analysisResult.label,
+            label: analysisResult.attentionLabel,
             analysis: analysisResult,
             timestamp: timestamp
         });

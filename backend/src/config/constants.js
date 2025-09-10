@@ -1,0 +1,1 @@
+export const ALERT_THRESHOLD = 0.6;
