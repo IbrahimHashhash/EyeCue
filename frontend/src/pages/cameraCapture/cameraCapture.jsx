@@ -4,7 +4,7 @@ import { useFrameCapture } from "../../hooks/useFrameCapture";
 import { useFrameUpload } from "../../hooks/useFrameUpload";
 import { useStudentCalibration } from "../../hooks/useStudentCalibration";
 import { FRAME_SETTINGS } from "../../config/constants";
-import StudentCalibrationModal from "../../components/StudentCalibrationModal/studentCalibration";
+import StudentCalibrationModal from "../../components/studentCalibration/studentCalibration";
 import "./cameraCapture.css";
 import ENDPOINTS from "../../api/endpoints"
 

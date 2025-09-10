@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { sessionService } from '../services/session.js';
+import { sessionService } from '../../services/session.js';
 
 const SessionControl = ({ onSessionStart, onSessionEnd }) => {
   const [currentSessionId, setCurrentSessionId] = useState(null);
