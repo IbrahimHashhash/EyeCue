@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
 import StudentCard from "./studentCard";
 import DebugView from "./debug";
-import SessionControl from "../../components/sessionControl"; 
+import SessionControl from "../../components/sessionStart"; 
 import "./dashboard.css";
 import {
   getSessionDuration,
@@ -40,19 +40,27 @@ const Dashboard = () => {
     }
     
     console.log('Real-time attention update:', data);
-    const isAttentive = data.label === 'attentive' || data.analysis?.attentionLabel === 'attentive';
-    const attentionLabel = data.label || data.analysis?.attentionLabel || 'unknown';
+    
+    const stableState = data.stabilization?.stableState || data.label;
+    const isAttentive = stableState === 'attentive';
+    const attentionLabel = stableState || 'unknown';
     const studentId = data.studentId;
     const timestamp = data.timestamp;
+    
     const now = new Date();
     setLastUpdate(now.toLocaleTimeString());
     if (!sessionStartTime) {
       setSessionStartTime(now);
     }
+    
     setStudents(prevStudents =>
       processStudentUpdate(prevStudents, data, isAttentive, attentionLabel, studentId, timestamp)
     );
-    setSessionStats(prev => updateSessionStats(prev, isAttentive));
+    
+    if (data.stabilization?.shouldUpdate) {
+      setSessionStats(prev => updateSessionStats(prev, isAttentive));
+    }
+    
     if (data.alert === true) {
       showInattentiveToast();
     }

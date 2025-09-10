@@ -5,7 +5,7 @@ export async function processFrame(frameBase64, studentId, timestamp) {
   try {
     const currentTimestamp = timestamp || new Date().toISOString();
     const frameId = `frame_${studentId}_${Date.now()}`;
-    
+
     console.log("Sending to FastAPI:", {
       endpoint: ENDPOINTS.ATTENTION_ANALYZE,
       studentId,
