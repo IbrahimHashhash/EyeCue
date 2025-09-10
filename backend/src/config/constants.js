@@ -1,1 +1,7 @@
+export const ATTENTION_STABILIZATION = {
+  FRAME_THRESHOLD: 4,         
+  DEFAULT_THRESHOLD: 3000,
+  MIN_THRESHOLD: 1000,         
+  MAX_THRESHOLD: 10000,      
+};
 export const ALERT_THRESHOLD = 0.6;

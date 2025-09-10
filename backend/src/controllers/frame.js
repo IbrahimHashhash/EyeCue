@@ -2,6 +2,7 @@ import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
+import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
 import { computeAlertFlag } from '../services/alert.js';
 
@@ -43,6 +44,17 @@ export async function frameHandler(req, res) {
 
         const analysisResult = await processFrame(frameBase64, studentId, timestamp);
 
+        const stabilizationResult = processAttentionWithCounter(
+            6, 
+            studentId, 
+            analysisResult.attentionLabel
+        );
+
+        console.log(`Stabilization for ${studentId}: Stable=${stabilizationResult.stableState}, Counter=${stabilizationResult.counter}`);
+
+        if (stabilizationResult.shouldUpdate) {
+            recordAttentionData(studentId, timestamp, stabilizationResult.stableState);
+        }
         updateStudent(studentId, analysisResult.attentionLabel);
 
         const alertFlag = computeAlertFlag();
@@ -57,16 +69,18 @@ export async function frameHandler(req, res) {
             studentId: analysisResult.studentId,
             alert: alertFlag,
             studentName: studentName,
-            label: analysisResult.attentionLabel,
+            label: stabilizationResult.stableState, 
             analysis: analysisResult,
-            timestamp: timestamp
+            timestamp: timestamp,
+            stabilization: stabilizationResult
         });
 
         return res.status(200).json({
             success: true,
             analysis: analysisResult,
             studentId: studentId,
-            timestamp: timestamp
+            timestamp: timestamp,
+            stabilization: stabilizationResult
         });
 
     } catch (error) {
