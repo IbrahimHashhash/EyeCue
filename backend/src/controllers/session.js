@@ -1,8 +1,8 @@
 import { SessionService } from '../services/sessionStart.js';
 
 export class SessionController {
-  constructor() {
-    this.sessionService = new SessionService();
+  constructor(uow) {
+    this.sessionService = new SessionService(uow);
   }
 
   async startSession(req, res) {

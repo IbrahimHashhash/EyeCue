@@ -1,11 +1,20 @@
 export class SessionService {
-  constructor() {
+  constructor(uow) {
     this.activeSessions = new Map();
+    this.uow = uow;
   }
 
   async startSession() {
-    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
+    const classId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+
+    const sessionId = await this.uow.sessions.create({
+      class_id: classId ?? null,
+      start_time: new Date().toISOString(),
+      end_time: null,
+      active: 1
+    });
+
     const sessionData = {
       id: sessionId,
       startTime: new Date().toISOString(),
@@ -13,15 +22,16 @@ export class SessionService {
       active: true,
       students: new Map()
     };
-    
+
     this.activeSessions.set(sessionId, sessionData);
-    
+
     return sessionId;
   }
 
   async endSession(sessionId) {
+    if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
     const session = this.activeSessions.get(sessionId);
-    
+
     if (!session) {
       throw new Error('Session not found');
     }
@@ -30,8 +40,16 @@ export class SessionService {
       throw new Error('Session is already ended');
     }
 
-    session.endTime = new Date().toISOString();
-    session.active = false;    
+    end_time = new Date().toISOString();
+    session.endTime = end_time;
+    session.active = false;
+
+    const ok = await this.uow.sessions.update(sessionId, {
+      end_time: end_time,
+      active: 0
+    });
+    if (!ok) throw new Error("Session not found or already ended");
+
     return session;
   }
 
