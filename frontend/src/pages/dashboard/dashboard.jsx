@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
 import StudentCard from "./studentCard";
 import DebugView from "./debug";
+import SessionControl from "../../components/sessionStart"; 
 import "./dashboard.css";
 import {
   getSessionDuration,
@@ -19,7 +20,6 @@ const Dashboard = () => {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
-  const [totalFramesProcessed, setTotalFramesProcessed] = useState(0);
   const [sessionStats, setSessionStats] = useState({
     totalAttentiveFrames: 0,
     totalInattentiveFrames: 0,
@@ -30,9 +30,15 @@ const Dashboard = () => {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [sortType, setSortType] = useState("attention");
   const [sessionDuration, setSessionDuration] = useState("00:00");
-  const [currentView, setCurrentView] = useState("overview"); 
+  const [currentView, setCurrentView] = useState("overview");
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   const handleAttentionUpdate = useCallback((data) => {
+    if (!currentSessionId) {
+      console.log('Ignoring attention update - no active session');
+      return;
+    }
+    
     console.log('Real-time attention update:', data);
     const isAttentive = data.label === 'attentive' || data.analysis?.attentionLabel === 'attentive';
     const attentionLabel = data.label || data.analysis?.attentionLabel || 'unknown';
@@ -40,8 +46,6 @@ const Dashboard = () => {
     const timestamp = data.timestamp;
     const now = new Date();
     setLastUpdate(now.toLocaleTimeString());
-    setIsSessionActive(true);
-    setTotalFramesProcessed(prev => prev + 1);
     if (!sessionStartTime) {
       setSessionStartTime(now);
     }
@@ -52,9 +56,30 @@ const Dashboard = () => {
     if (data.alert === true) {
       showInattentiveToast();
     }
-  }, [sessionStartTime]);
+  }, [currentSessionId, sessionStartTime]);
 
   useSocket(handleAttentionUpdate);
+
+  const handleSessionStart = (sessionId) => {
+    console.log('Session started:', sessionId);
+    setCurrentSessionId(sessionId);
+    setIsSessionActive(true);
+    setSessionStartTime(new Date());
+    setStudents([]);
+    setSessionStats({
+      totalAttentiveFrames: 0,
+      totalInattentiveFrames: 0,
+      attentivePercentage: 0
+    });
+  };
+
+  const handleSessionEnd = (sessionId) => {
+    console.log('Session ended:', sessionId);
+    setCurrentSessionId(null);
+    setIsSessionActive(false);
+    setSessionStartTime(null);
+    setLastUpdate(null);
+  };
 
   const filteredStudents = filterStudents(students, searchTerm, selectedFilter);
   const sortedAndFilteredStudents = sortStudents(filteredStudents, sortType);
@@ -267,9 +292,6 @@ const Dashboard = () => {
                     <strong>Duration:</strong> {sessionDuration}
                   </span>
                   <span className="stat-item">
-                    <strong>Frames:</strong> {totalFramesProcessed}
-                  </span>
-                  <span className="stat-item">
                     <strong>Overall Attention:</strong> {sessionStats.attentivePercentage}%
                   </span>
                   {lastUpdate && (
@@ -310,6 +332,12 @@ const Dashboard = () => {
           )}
         </section>
       </main>
+      
+      <SessionControl 
+        onSessionStart={handleSessionStart}
+        onSessionEnd={handleSessionEnd}
+      />
+      
       <ToastContainer
         position="bottom-right"
         closeOnClick

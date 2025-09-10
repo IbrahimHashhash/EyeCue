@@ -3,6 +3,7 @@ import http from 'http';
 import cors from 'cors';
 import { init } from './socket/index.js';
 import studentRoutes from './routes/student.js';
+import sessionRoutes from './routes/session.js';
 import { initTF } from './services/check-similarity/tf-init.js';
 import { PORT, FE_ORIGIN } from './config/env.js';
 import { initializeDbConnection } from './services/db.js';
@@ -29,6 +30,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/student', studentRoutes);
+app.use('/api/session', sessionRoutes);
 
 await initTF();
 init(server);

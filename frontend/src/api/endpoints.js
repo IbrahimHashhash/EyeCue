@@ -12,6 +12,11 @@ const ENDPOINTS = {
   SOCKET: {
     MAIN: BACKEND_URL,
   },
+  SESSION: {
+    START: `${API_BASE}/session/start`,
+    END: `${API_BASE}/session/end`,
+  },
+
 };
 
 export default ENDPOINTS;
