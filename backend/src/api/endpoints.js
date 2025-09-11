@@ -7,9 +7,5 @@ export const ENDPOINTS = {
   START: `${API_BASE}/session/start`,
   END: `${API_BASE}/session/end`,
 };
-export const SESSION_ENDPOINTS = {
-  START: `${API_BASE}/session/start`,
-  END: `${API_BASE}/session/end`,
-};
 
 export default ENDPOINTS;

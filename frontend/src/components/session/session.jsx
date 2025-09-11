@@ -8,7 +8,6 @@ const SessionControl = ({ onSessionStart, onSessionEnd }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Restore on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && saved !== 'null' && saved !== 'undefined') {
@@ -16,7 +15,6 @@ const SessionControl = ({ onSessionStart, onSessionEnd }) => {
     }
   }, []);
 
-  // Keep storage in sync
   useEffect(() => {
     if (currentSessionId) {
       localStorage.setItem(STORAGE_KEY, currentSessionId);
