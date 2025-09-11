@@ -13,17 +13,23 @@ export default class SessionRepository extends BaseRepository {
     return result.recordset;
   }
   async create(sessionData) {
-    const result = await this.pool
-      .request()
-      .input('class_id', sessionData.class_id)
-      .input('start_time', sessionData.start_time)
-      .input('end_time',null )
-      .input('active', sessionData.active) 
-      .query(
-        `INSERT INTO ${SessionModel.tableName} (class_id, start_time, end_time, active) VALUES (@class_id, @start_time, @end_time, @active); SELECT SCOPE_IDENTITY() AS id;`
-      );
-    return result.recordset[0].id;
-  }
+  const result = await this.pool
+    .request()
+    .input('id', sessionData.id)                
+    .input('class_id', sessionData.class_id)
+    .input('start_time', sessionData.start_time)
+    .input('end_time', sessionData.end_time ?? null)
+    .input('active', sessionData.active)
+    .query(
+      `INSERT INTO ${SessionModel.tableName} 
+        (id, class_id, start_time, end_time, active) 
+       VALUES (@id, @class_id, @start_time, @end_time, @active);
+
+       SELECT @id AS id;`                       
+    );
+  return result.recordset[0].id;
+}
+
   async update(sessionId, updateData) {
     const result = await this.pool
       .request()
