@@ -2,7 +2,7 @@ import { ssim } from 'ssim.js';
 import { extractFaceROI } from './faceDetect.js';
 import { getPrev, setPrev } from './state.js';
 
-export const SIMILARITY_THRESHOLDS = 0.65 ;
+export const SIMILARITY_THRESHOLDS = 0.90;
 
 /**
  * Compare current frame (pre-MediaPipe) to previous for a client using
