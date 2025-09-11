@@ -92,8 +92,8 @@ export class FrameController {
                 studentId,
                 studentName,
                 timestamp,
-                similarity_score: comparasonResult.similarityScore,
-                label: stabilizationResult.stableState
+                similarity_score: comparasonResult.scores.ssim,
+                label: analysisResult.attentionLabel
             });
             console.log('Frame log stored for student:', studentId);
 

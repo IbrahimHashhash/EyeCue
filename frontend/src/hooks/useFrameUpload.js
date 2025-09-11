@@ -15,7 +15,7 @@ export const useFrameUpload = (endpoint) => {
     if (user) {
       setStudentId(user.id);
       setStudentName(user.name);
-      setCurrentSessionId(user.currentSessionId || null);
+      setCurrentSessionId(localStorage.getItem('sessionId')|| null);
     }
   }, []);
 

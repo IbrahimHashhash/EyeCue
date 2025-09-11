@@ -23,6 +23,7 @@ export default class FrameLogRepository extends BaseRepository {
 
     const result = await this.pool
       .request()
+      .input("id", entry.id)
       .input("session_id", entry.session_id)
       .input("student_id", entry.student_id)
       .input("timestamp", entry.timestamp)
@@ -30,9 +31,9 @@ export default class FrameLogRepository extends BaseRepository {
       .input("is_significant", entry.is_significant)
       .query(`
       INSERT INTO ${FrameLog.tableName}
-        (session_id, student_id, [timestamp], similarity_score, is_significant)
+        (id, session_id, student_id, [timestamp], similarity_score, is_significant)
       OUTPUT INSERTED.*
-      VALUES (@session_id, @student_id, @timestamp, @similarity_score, @is_significant)
+      VALUES (@id, @session_id, @student_id, @timestamp, @similarity_score, @is_significant)
       `);
       console.log(result.recordset[0]);
     return result.recordset[0].id;

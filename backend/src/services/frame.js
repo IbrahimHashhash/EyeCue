@@ -1,5 +1,6 @@
 import FrameLogRepository from '../repositories/frameLogRepository.js';
 import AttentionMetricRepository from '../repositories/attentionMetricRepository.js';
+import { v4 as uuidv4 } from 'uuid';
 
 class FrameService {
     /**
@@ -20,12 +21,13 @@ class FrameService {
      * @param {string|number|Date} params.timestamp
      * @param {number|null} params.similarityScore
      * @param {string|number|null} [params.label] - optional attention label to attach
-     * @returns {Promise<string|number>} frame_log_id
      */
     async storeFrame({ sessionId, studentId, timestamp, similarity_score, label = null }) {
         const frameLogRepo = new FrameLogRepository(this.pool);
+        const id = uuidv4();  
 
-        const frame_log_id = await frameLogRepo.create({
+        await frameLogRepo.create({
+            id: id,
             session_id: sessionId,
             student_id: studentId,
             timestamp,
@@ -33,18 +35,17 @@ class FrameService {
             is_significant: true,
         });
 
-        console.log(`Stored frame log with ID: ${frame_log_id}`);
 
         if (label != null) {
-            if (!['Attentive', 'inattentive'].includes(label)) {
+            if (!['attentive', 'inattentive'].includes(label)) {
                 console.warn(`Invalid attention label "${label}" provided. Skipping storing attention metric.`);
-                return frame_log_id;
+                return id;
             }
             const attentionMetricRepo = new AttentionMetricRepository(this.pool);
-            await attentionMetricRepo.storeAttentionMetric(frame_log_id, label);
+            await attentionMetricRepo.storeAttentionMetric(id, label);
         }
 
-        return frame_log_id;
+        return id;
     }
 }
 export default FrameService;
