@@ -1,4 +1,3 @@
-// app.js - Updated to include session routes
 import express from 'express';
 import http from 'http';
 import cors from 'cors';

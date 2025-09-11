@@ -47,7 +47,7 @@ const SessionControl = ({ onSessionStart, onSessionEnd }) => {
     try {
       await sessionService.endSession(currentSessionId);
       onSessionEnd?.(currentSessionId);
-      setCurrentSessionId(null);            // clears localStorage via effect
+      setCurrentSessionId(null);         
     } catch (err) {
       setError(err.message);
       console.error('Failed to end session:', err);
