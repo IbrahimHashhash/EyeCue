@@ -9,7 +9,7 @@ import { computeAlertFlag } from '../services/alert.js';
 
 export class FrameController {
     constructor(uow) {
-        this.frameservice = FrameService(uow);
+        this.frameservice = new FrameService(uow);
     }
 
     async frameHandler(req, res) {
@@ -86,14 +86,15 @@ export class FrameController {
                 stabilization: stabilizationResult
             });
 
-
             await this.frameservice.storeFrame({
                 sessionId,
                 studentId,
                 studentName,
                 timestamp,
-                similarity_score: comparisonResult?.scores?.ssim ?? null
+                similarity_score: comparasonResult.similarityScore,
+                label: stabilizationResult.stableState
             });
+            console.log('Frame log stored for student:', studentId);
 
             return res.status(200).json({
                 success: true,

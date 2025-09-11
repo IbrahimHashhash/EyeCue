@@ -16,12 +16,12 @@ export default class AttentionMetricRepository extends BaseRepository {
       VALUES ($1, $2)
       RETURNING *;
     `;
+    const score = 0;
     if (attention_score == "attentive") {
-      attention_score = 1;
+      score = 1;
     }
-    else attention_score = 0; 
 
-    const values = [frame_log_id, attention_score];
+    const values = [frame_log_id, score];
     const { rows } = await this.pool.query(query, values);
     return rows[0];
   }
