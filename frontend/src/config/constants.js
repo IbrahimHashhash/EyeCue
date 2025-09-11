@@ -1,7 +1,7 @@
 export const FRAME_SETTINGS = {
   width: 640,
   height: 480,
-  intervalMs: 1000,    
+  intervalMs: 2900,    
   framesPerInterval: 1,  
 };
 
