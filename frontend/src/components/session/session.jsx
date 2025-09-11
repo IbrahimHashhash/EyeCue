@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { sessionService } from '../../services/session.js';
-
-const STORAGE_KEY = 'sessionId';
+import {STORAGE_KEY} from '../../config/constants.js';
 
 const SessionControl = ({ onSessionStart, onSessionEnd }) => {
   const [currentSessionId, setCurrentSessionId] = useState(null);
