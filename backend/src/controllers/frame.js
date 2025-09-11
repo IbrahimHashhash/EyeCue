@@ -4,7 +4,7 @@ import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
 import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
-import { computeAlertFlag } from '../services/alert.js';
+import { computeAlertFlag, resetAlertState } from '../services/alert.js';
 
 export async function frameHandler(req, res) {
 
@@ -54,8 +54,9 @@ export async function frameHandler(req, res) {
 
         if (stabilizationResult.shouldUpdate) {
             recordAttentionData(studentId, timestamp, stabilizationResult.stableState);
+            updateStudent(studentId, stabilizationResult.stableState);
+            resetAlertState();
         }
-        updateStudent(studentId, analysisResult.attentionLabel);
 
         const alertFlag = computeAlertFlag();
 
