@@ -33,6 +33,8 @@ class FrameService {
             is_significant: true,
         });
 
+        console.log(`Stored frame log with ID: ${frame_log_id}`);
+
         if (label != null) {
             if (!['Attentive', 'inattentive'].includes(label)) {
                 console.warn(`Invalid attention label "${label}" provided. Skipping storing attention metric.`);
