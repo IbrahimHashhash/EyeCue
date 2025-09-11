@@ -69,7 +69,7 @@ const SummaryDebug = () => {
         <div className="header-top">
           <div className="header-title-section">
             <h1 className="dashboard-title">
-              Summary <span className="title-accent">Debug</span>
+              Detailed <span className="title-accent">analytics</span>
             </h1>
             <p className="dashboard-subtitle">
               Detailed analytics and monitoring data

@@ -1,6 +1,8 @@
 import { getAllStudents } from "./studentState.js";
 import { ALERT_THRESHOLD } from "../config/constants.js";
 
+let hasAlertTriggered = false;
+
 export function computeAlertFlag(){
 
     const students = getAllStudents();
@@ -9,5 +11,16 @@ export function computeAlertFlag(){
 
     const inattentiveCount = students.filter(label => label === 'inattentive').length;
 
-    return (inattentiveCount / students.length) >= ALERT_THRESHOLD;
+    const condition = (inattentiveCount / students.length) >= ALERT_THRESHOLD;
+
+    if (!hasAlertTriggered && condition) {
+        hasAlertTriggered = true;
+        return true;
+    }
+
+    return false
 };
+
+export function resetAlertState() {
+    hasAlertTriggered = false;
+}

@@ -9,7 +9,7 @@ const DebugView = ({
         <div className="no-students">
           <div className="no-students-icon">👥</div>
           <h3>No Students Found</h3>
-          <p>Start a camera session to see debug data</p>
+          <p>Start a camera session to see detailed analysis data</p>
         </div>
       ) : (
         sortedAndFilteredStudents.map((student, index) => (
@@ -29,7 +29,6 @@ const DebugView = ({
             <div className="card-header">
               <div className="student-details">
                 <h3 className="student-name">{student.studentName}</h3>
-                <span className="student-id">#{student.studentId}</span>
                 {isSessionActive && (
                   <span className={`attention-badge ${student.currentState || 'unknown'}`}>
                     {student.currentState ? student.currentState.toUpperCase() : 'WAITING...'}

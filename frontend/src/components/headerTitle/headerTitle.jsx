@@ -5,7 +5,6 @@ const HeaderTitle = ({ title, accent, subtitle }) => {
         {title}
         {accent && <span className="title-accent">{accent}</span>}
       </h1>
-      {subtitle && <p className="dashboard-subtitle">{subtitle}</p>}
     </div>
   );
 };

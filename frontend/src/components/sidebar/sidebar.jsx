@@ -1,6 +1,7 @@
 import Logo from "../logo/logo";
 import Navigation from "../navigation/navigation";
 import UserProfile from "../userProfile/userProfile";
+import LeaveSession from "../leaveSession/leaveSession";
 
 const Sidebar = ({ 
   currentView, 
@@ -21,6 +22,9 @@ const Sidebar = ({
       />
       <div className="sidebar-footer">
         <UserProfile {...userProfileProps} />
+        <div className="sidebar-actions">
+          <LeaveSession />
+        </div>
       </div>
     </aside>
   );

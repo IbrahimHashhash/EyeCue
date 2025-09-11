@@ -4,24 +4,23 @@ import cv2
 import threading
 from typing import Optional, Tuple, Dict
 
-from utils.face_metrics import extract_face_features
+from utils.face_metrics import extract_face_features, EyeMetrics
 
 class FaceMeshError(Exception):
     pass
 
 class FaceMeshPipeline:
-    
     MIN_FRAME_DIMENSION = 100
-    
+
     def __init__(self, static_image_mode: bool = False):
         self._lock = threading.RLock()
         self._is_closed = False
-        
+        self._eye_metrics = EyeMetrics()
         try:
             self.face_mesh = mp.solutions.face_mesh.FaceMesh(
                 static_image_mode=static_image_mode,
                 max_num_faces=1,
-                refine_landmarks=True, 
+                refine_landmarks=True,
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5
             )
@@ -57,31 +56,24 @@ class FaceMeshPipeline:
         with self._lock:
             if self._is_closed:
                 raise FaceMeshError("Pipeline closed")
-
             h, w = self._validate_frame(frame_bgr)
             rgb_frame = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-
             try:
                 res = self.face_mesh.process(rgb_frame)
             except Exception as e:
                 raise FaceMeshError(f"MediaPipe processing failed: {e}")
-
             if not res.multi_face_landmarks:
                 return {
                     'face_detected': False,
                     'face_features': {},
                 }
-
             landmarks = res.multi_face_landmarks[0].landmark
-
             try:
-                face_features = extract_face_features(landmarks, w, h)
-                
+                face_features = extract_face_features(landmarks, w, h, self._eye_metrics)
                 return {
                     'face_detected': True,
                     'face_features': face_features,
                 }
-                
             except Exception:
                 return {
                     'face_detected': False,

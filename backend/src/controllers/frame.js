@@ -5,7 +5,7 @@ import { compareAgainstPrevious } from '../services/check-similarity/similarity.
 import FrameService  from '../services/frame.js';
 import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
-import { computeAlertFlag } from '../services/alert.js';
+import { computeAlertFlag, resetAlertState } from '../services/alert.js';
 
 export class FrameController {
     constructor(uow) {
@@ -63,10 +63,11 @@ export class FrameController {
 
             console.log(`Stabilization for ${studentId}: Stable=${stabilizationResult.stableState}, Counter=${stabilizationResult.counter}`);
 
-            if (stabilizationResult.shouldUpdate) {
-                recordAttentionData(studentId, timestamp, stabilizationResult.stableState);
-            }
-            updateStudent(studentId, analysisResult.attentionLabel);
+        if (stabilizationResult.shouldUpdate) {
+            recordAttentionData(studentId, timestamp, stabilizationResult.stableState);
+            updateStudent(studentId, stabilizationResult.stableState);
+            resetAlertState();
+        }
 
             const alertFlag = computeAlertFlag();
 
