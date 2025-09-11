@@ -1,14 +1,24 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
+  width="120"
+  height="120"
+  viewBox="0 0 120 120"
   fill="none"
-  stroke="currentColor"
-  strokeWidth="2"
-  strokeLinecap="round"
-  strokeLinejoin="round"
 >
-  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-  <circle cx="12" cy="12" r="3"></circle>
+  <!-- Iris circle -->
+  <circle cx="60" cy="60" r="36" fill="url(#irisGradient)" />
+
+  <!-- Pupil -->
+  <circle cx="60" cy="60" r="14" fill="#0f172a" />
+
+  <!-- Light reflection -->
+  <circle cx="52" cy="52" r="5" fill="white" opacity="0.85"/>
+
+  <defs>
+    <radialGradient id="irisGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="70%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </radialGradient>
+  </defs>
 </svg>

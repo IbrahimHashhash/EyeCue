@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
 import SessionControl from "../../components/session/session"; 
+import LeaveSession from "../../components/leaveSession/leaveSession";
 import "./dashboard.css";
 import {
   getSessionDuration,
@@ -116,12 +117,14 @@ const Dashboard = () => {
     },
     {
       id: "debug",
-      label: "Summary Debug",
+      label: "Detailed Analytics",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M12 1v6m0 6v6"></path>
-          <path d="m21 12-6-3-6 3-6-3"></path>
+          <line x1="6" y1="20" x2="6" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="18" y1="20" x2="18" y2="14"></line>
+          
+          <polyline points="4,16 8,12 12,14 16,8 20,10"></polyline>
         </svg>
       )
     }
@@ -154,8 +157,8 @@ const Dashboard = () => {
       <main className="main-content">
         <Header 
           titleProps={{
-            title: currentView === "overview" ? "Attention" : "Summary",
-            accent: currentView === "overview" ? "Dashboard" : "Debug",
+            title: currentView === "overview" ? "Attention" : "Detailed",
+            accent: currentView === "overview" ? "Dashboard" : "Analytics",
             subtitle: currentView === "overview" 
               ? "Monitor student attention states in real-time"
               : "Detailed analytics and monitoring data"
@@ -177,6 +180,7 @@ const Dashboard = () => {
             activeLabel: "Live Session Active",
             inactiveLabel: "No Active Session"
           }}
+          leaveSessionComponent={<LeaveSession />}
         />
         
         <section className="content-body">

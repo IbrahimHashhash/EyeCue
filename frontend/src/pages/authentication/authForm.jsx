@@ -55,12 +55,6 @@ const AuthForm = ({ onSubmit }) => {
                         {isLoading ? "Logging in..." : "Continue as Guest"}
                     </button>
                 </form>
-                <div className="guest-info">
-                    <p className="guest-description">
-                        💡 <strong>Guest Login:</strong> If you're a registered user, enter your name and we'll find your account. 
-                        If you're new, we'll create a temporary guest profile for you.
-                    </p>
-                </div>
             </div>
         </div>
     );
