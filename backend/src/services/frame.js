@@ -1,33 +1,45 @@
 const FrameLogRepository = require('../repositories/frameLogRepository');
 const AttentionMetricRepository = require('../repositories/attentionMetricRepository');
 
-/**
- * Stores a frame log in the database.
- * @param {Object} appLocals - Express app.locals object (should contain uow).
- * @param {Object} frameData - Frame data to store.
- * @param {string|number} frameData.sessionId
- * @param {string|number} frameData.studentId
- * @param {Date|string|number} frameData.timestamp
- * @param {number} frameData.similarityScore
- * @returns {Promise<void>}
- */
-async function storeFrameLog(appLocals, { sessionId, studentId, timestamp, similarityScore, label }) {
-    const uow = appLocals.uow;
-    const pool = uow.pool || uow._pool || uow.getPool();
-    const frameLogRepo = new FrameLogRepository(pool);
-    frame_log_id =  await frameLogRepo.create({
+class FrameService {
+  /**
+   * @param {object} uow - Your Unit of Work (with or exposing a pool)
+   */
+  constructor(uow) {
+    if (!uow) throw new Error('FrameService requires a uow');
+    this.uow = uow;
+    this.pool = uow.pool || uow._pool || (typeof uow.getPool === 'function' ? uow.getPool() : null);
+    if (!this.pool) throw new Error('FrameService could not resolve a DB pool from uow');
+  }
 
-        session_id: sessionId,
-        student_id: studentId,
-        timestamp,
-        similarity_score: similarityScore,
-        is_significant: true
+  /**
+   * Store a frame log (and optional attention label) in DB.
+   * @param {Object} params
+   * @param {string|number} params.sessionId
+   * @param {string|number} params.studentId
+   * @param {string|number|Date} params.timestamp
+   * @param {number|null} params.similarityScore
+   * @param {string|number|null} [params.label] - optional attention label to attach
+   * @returns {Promise<string|number>} frame_log_id
+   */
+  async storeFrame({ sessionId, studentId, timestamp, similarityScore, label = null }) {
+    const frameLogRepo = new FrameLogRepository(this.pool);
+
+    const frame_log_id = await frameLogRepo.create({
+      session_id: sessionId,
+      student_id: studentId,
+      timestamp,
+      similarity_score: similarityScore,
+      is_significant: true,
     });
-    if(label){
-        const attentionMetricRepo = new AttentionMetricRepository(pool);
-        await attentionMetricRepo.storeAttentionMetric(frame_log_id, label);
+
+    if (label != null) {
+      const attentionMetricRepo = new AttentionMetricRepository(this.pool);
+      await attentionMetricRepo.storeAttentionMetric(frame_log_id, label);
     }
 
+    return frame_log_id;
+  }
 }
 
-module.exports = storeFrameLog;
+module.exports = FrameService;
