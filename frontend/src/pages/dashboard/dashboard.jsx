@@ -2,9 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSocket } from "../../hooks/useSocket";
-import StudentCard from "./studentCard";
-import DebugView from "./debug";
-import SessionControl from "../../components/sessionStart"; 
+import SessionControl from "../../components/session/session"; 
 import "./dashboard.css";
 import {
   getSessionDuration,
@@ -14,6 +12,11 @@ import {
   updateSessionStats,
   showInattentiveToast
 } from "./dashboard.utils";
+
+import Sidebar from "../../components/sidebar/sidebar";
+import Header from "../../components/header/header";
+import StudentCard from "../../components/studentCard/studentCard";
+import DebugView from "../debug/debug";
 
 const Dashboard = () => {
   const [students, setStudents] = useState([]);
@@ -99,219 +102,83 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [sessionStartTime]);
 
+  const navItems = [
+    {
+      id: "overview",
+      label: "Dashboard",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="20" x2="12" y2="10"></line>
+          <line x1="18" y1="20" x2="18" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="16"></line>
+        </svg>
+      )
+    },
+    {
+      id: "debug",
+      label: "Summary Debug",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M12 1v6m0 6v6"></path>
+          <path d="m21 12-6-3-6 3-6-3"></path>
+        </svg>
+      )
+    }
+  ];
+
+  const filterOptions = [
+    { value: "all", label: "All Students" },
+    { value: "attentive", label: "Currently Attentive" },
+    { value: "inattentive", label: "Currently Inattentive" }
+  ];
+
+  const sessionStatsArray = isSessionActive ? [
+    { label: "Duration", value: sessionDuration },
+    { label: "Overall Attention", value: `${sessionStats.attentivePercentage}%` },
+    ...(lastUpdate ? [{ label: "Last Update", value: lastUpdate }] : [])
+  ] : [];
+
   return (
     <div className="dashboard-container">
       <div className="background-pattern"></div>
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <div className="logo">
-            <div className="logo-icon">
-              <span className="logo-symbol">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </span>
-            </div>
-            <div className="logo-content">
-              <span className="logo-title">EyeCue</span>
-              <span className="logo-subtitle">Analytics</span>
-            </div>
-          </div>
-        </div>
-        <nav className="sidebar-nav">
-          <div className="nav-group">
-            <span className="nav-label">Overview</span>
-            <button 
-              className={`nav-item ${currentView === "overview" ? "active" : ""}`}
-              onClick={() => setCurrentView("overview")}
-            >
-              <div className="nav-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="20" x2="12" y2="10"></line>
-                  <line x1="18" y1="20" x2="18" y2="4"></line>
-                  <line x1="6" y1="20" x2="6" y2="16"></line>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-              <div className="nav-indicator"></div>
-            </button>
-            <button 
-              className={`nav-item ${currentView === "debug" ? "active" : ""}`}
-              onClick={() => setCurrentView("debug")}
-            >
-              <div className="nav-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M12 1v6m0 6v6"></path>
-                  <path d="m21 12-6-3-6 3-6-3"></path>
-                </svg>
-              </div>
-              <span>Summary Debug</span>
-              <div className="nav-indicator"></div>
-            </button>
-          </div>
-        </nav>
-        <div className="sidebar-footer">
-          <div className="user-profile">
-            <div className="user-avatar">T</div>
-            <div className="user-info">
-              <span className="user-name">Teacher</span>
-              <span className="user-role">Administrator</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      
+      <Sidebar 
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        navItems={navItems}
+        logoProps={{ title: "EyeCue", subtitle: "Analytics" }}
+        userProfileProps={{ avatar: "T", name: "Teacher", role: "Administrator" }}
+      />
+      
       <main className="main-content">
-        <header className="dashboard-header">
-          <div className="header-top">
-            <div className="header-title-section">
-              <h1 className="dashboard-title">
-                {currentView === "overview" ? "Attention" : "Summary"}
-                <span className="title-accent">
-                  {currentView === "overview" ? "Dashboard" : "Debug"}
-                </span>
-              </h1>
-              <p className="dashboard-subtitle">
-                {currentView === "overview" 
-                  ? "Monitor student attention states in real-time"
-                  : "Detailed analytics and monitoring data"
-                }
-              </p>
-            </div>
-            <div className="header-controls">
-              <div className="search-container">
-                <input
-                  type="text"
-                  placeholder="Search students..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-                <div className="search-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </div>
-              </div>
-              <div className="sort-container">
-                <button
-                  className="sort-button"
-                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="filter-icon"
-                  >
-                    <path d="M22 3H2L10 12.46V19L14 21V12.46L22 3Z" />
-                  </svg>
-                  <span className="sort-label">Filter</span>
-                </button>
-                {isSortDropdownOpen && (
-                  <div className="sort-dropdown-menu">
-                    <div
-                      className={`sort-dropdown-item ${selectedFilter === "all" ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedFilter("all");
-                        setIsSortDropdownOpen(false);
-                      }}
-                    >
-                      All Students
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${selectedFilter === "attentive" ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedFilter("attentive");
-                        setIsSortDropdownOpen(false);
-                      }}
-                    >
-                      Currently Attentive
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${selectedFilter === "inattentive" ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedFilter("inattentive");
-                        setIsSortDropdownOpen(false);
-                      }}
-                    >
-                      Currently Inattentive
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="session-status">
-            <div className="status-row">
-              <div className={`status-indicator ${isSessionActive ? 'active' : 'inactive'}`}>
-                <span className="status-dot"></span>
-                {isSessionActive ? 'Live Session Active' : 'No Active Session'}
-              </div>
-              {isSessionActive && (
-                <div className="session-stats">
-                  <span className="stat-item">
-                    <strong>Duration:</strong> {sessionDuration}
-                  </span>
-                  <span className="stat-item">
-                    <strong>Overall Attention:</strong> {sessionStats.attentivePercentage}%
-                  </span>
-                  {lastUpdate && (
-                    <span className="stat-item">
-                      <strong>Last Update:</strong> {lastUpdate}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
+        <Header 
+          titleProps={{
+            title: currentView === "overview" ? "Attention" : "Summary",
+            accent: currentView === "overview" ? "Dashboard" : "Debug",
+            subtitle: currentView === "overview" 
+              ? "Monitor student attention states in real-time"
+              : "Detailed analytics and monitoring data"
+          }}
+          searchControlsProps={{
+            searchTerm,
+            setSearchTerm,
+            selectedFilter,
+            setSelectedFilter,
+            isDropdownOpen: isSortDropdownOpen,
+            setIsDropdownOpen: setIsSortDropdownOpen,
+            searchPlaceholder: "Search students...",
+            filterOptions
+          }}
+          sessionStatusProps={{
+            isActive: isSessionActive,
+            duration: sessionDuration,
+            stats: sessionStatsArray,
+            activeLabel: "Live Session Active",
+            inactiveLabel: "No Active Session"
+          }}
+        />
+        
         <section className="content-body">
           {currentView === "overview" ? (
             <div className="simple-students-grid">

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Dashboard from "../pages/dashboard/dashboard";
 import CameraCapture from "../pages/cameraCapture/cameraCapture";
-import AuthPage from "../pages/Auth/auth";
+import AuthPage from "../pages/authentication/auth";
 
 export const ROUTES = {
   LOGIN: "/",

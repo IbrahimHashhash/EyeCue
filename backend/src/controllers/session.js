@@ -1,8 +1,8 @@
 import { SessionService } from '../services/sessionStart.js';
 
 export class SessionController {
-  constructor() {
-    this.sessionService = new SessionService();
+  constructor(uow) {
+    this.sessionService = new SessionService(uow);
   }
 
   async startSession(req, res) {
@@ -28,6 +28,7 @@ export class SessionController {
   async endSession(req, res) {
     try {
       const { sessionId } = req.body;
+      console.log(`Request to end session with ID: ${sessionId}`);
       
       if (!sessionId) {
         return res.status(400).json({

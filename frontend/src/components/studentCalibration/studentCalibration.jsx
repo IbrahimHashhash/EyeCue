@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import "./studentCalibrationModal.css";
 
 const StudentCalibrationModal = ({ isOpen, countdown }) => {
