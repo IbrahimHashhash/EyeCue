@@ -14,4 +14,9 @@ router.post('/end', (req, res) => {
   return ctrl.endSession(req, res);
 });
 
+router.post('/report', (req, res) => {
+  const ctrl = new SessionController(req.app.locals.uow);
+  return ctrl.generateReport(req, res);
+});
+
 export default router;

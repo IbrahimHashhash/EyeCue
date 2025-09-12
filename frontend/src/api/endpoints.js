@@ -15,8 +15,8 @@ const ENDPOINTS = {
   SESSION: {
     START: `${API_BASE}/session/start`,
     END: `${API_BASE}/session/end`,
+    REPORT: `${API_BASE}/session/report`,
   },
-
 };
 
 export default ENDPOINTS;

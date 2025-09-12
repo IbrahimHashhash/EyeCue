@@ -53,4 +53,37 @@ export class SessionController {
       });
     }
   }
+
+  async generateReport(req, res) {
+    try {
+      // Get current active session if no sessionId provided
+      let sessionId = req.body.sessionId;
+      
+      if (!sessionId) {
+        sessionId = this.sessionService.getCurrentActiveSessionId();
+        if (!sessionId) {
+          return res.status(400).json({
+            success: false,
+            message: 'No active session found. Please provide a session ID or start a session first.'
+          });
+        }
+      }
+
+      console.log(`Generating report for session: ${sessionId}`);
+      
+      const report = await this.sessionService.generateReport(sessionId);
+      
+      res.status(200).json({
+        success: true,
+        data: report,
+        message: 'Report generated successfully'
+      });
+    } catch (error) {
+      console.error('Error generating report:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to generate report'
+      });
+    }
+  }
 }

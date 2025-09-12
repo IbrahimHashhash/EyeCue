@@ -6,6 +6,7 @@ export const ENDPOINTS = {
   ATTENTION_ANALYZE: `${API_BASE}/attention/analyze`,
   START: `${API_BASE}/session/start`,
   END: `${API_BASE}/session/end`,
+  GENERATE_REPORT: `${API_BASE}/session/report`,
 };
 
 export default ENDPOINTS;

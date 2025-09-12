@@ -60,8 +60,34 @@ export class SessionService {
     return session;
   }
 
+  async generateReport(sessionId) {
+    if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
+    
+    // Check if session exists (either active or completed)
+    const session = this.activeSessions.get(sessionId) || 
+                   await this.uow.sessions.findById(sessionId);
+    
+    if (!session) {
+      throw new Error('Session not found');
+    }
+
+    // Generate the attention report
+    const reportData = await this.uow.sessions.generateAttentionReport(sessionId);
+    
+    return {
+      sessionId,
+      generatedAt: new Date().toISOString(),
+      students: reportData
+    };
+  }
+
   getActiveSession(sessionId) {
     return this.activeSessions.get(sessionId);
+  }
+
+  getCurrentActiveSessionId() {
+    const activeSessions = this.getAllActiveSessions();
+    return activeSessions.length > 0 ? activeSessions[0].id : null;
   }
 
   getAllActiveSessions() {
