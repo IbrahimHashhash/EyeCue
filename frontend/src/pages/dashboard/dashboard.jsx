@@ -5,7 +5,7 @@ import { useSocket } from "../../hooks/useSocket";
 import SessionControl from "../../components/session/session"; 
 import LeaveSession from "../../components/leaveSession/leaveSession";
 import "./dashboard.css";
-import { ReactComponent as NoStudentSVG } from "../../icons/noStudents.svg";
+import NoStudentPNG from "../../icons/student.png";
 import { ReactComponent as DashboardSVG } from "../../icons/dashboard.svg";
 import { ReactComponent as DebugSVG } from "../../icons/debug.svg";
 import { ReactComponent as ReportSVG } from "../../icons/report.svg";
@@ -204,10 +204,10 @@ const Dashboard = () => {
         
         <section className="content-body">
           {currentView === "overview" ? (
-            <div className="simple-students-grid">
+            <div className="students-grid">
               {sortedAndFilteredStudents.length === 0 ? (
                 <div className="no-students">
-                  <div className="no-students-icon"><NoStudentSVG/></div>
+                  <img src={NoStudentPNG} alt="No Students" width={80} height={80} />
                   <h3>No Students Found</h3>
                   <p>Start a camera session to see real-time attention data</p>
                 </div>

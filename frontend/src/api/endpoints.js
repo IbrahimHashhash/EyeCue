@@ -16,6 +16,7 @@ const ENDPOINTS = {
     START: `${API_BASE}/session/start`,
     END: `${API_BASE}/session/end`,
     REPORT: `${API_BASE}/session/report`,
+    DOWNLOAD_PDF: `${API_BASE}/session/download-pdf`,
   },
 };
 

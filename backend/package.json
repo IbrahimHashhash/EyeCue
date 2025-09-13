@@ -21,9 +21,15 @@
     "sharp": "0.34.3",
     "socket.io": "4.8.1",
     "ssim.js": "3.5.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "pdfkit": "^0.13.0"
+
   },
   "devDependencies": {
-    "nodemon": "3.1.10"
+    "nodemon": "3.1.10",
+    "@types/pdfkit": "^0.12.3"
   }
+  
+  
 }
+
