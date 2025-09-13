@@ -60,26 +60,32 @@ export class SessionService {
     return session;
   }
 
-  async generateReport(sessionId) {
-    if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
-    
-    // Check if session exists (either active or completed)
-    const session = this.activeSessions.get(sessionId) || 
-                   await this.uow.sessions.findById(sessionId);
-    
-    if (!session) {
-      throw new Error('Session not found');
+async generateReport(sessionId) {
+  if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
+  
+  console.log('Generating report for session ID:', sessionId);
+  
+  let session = this.activeSessions.get(sessionId);
+  
+  if (!session) {
+    const dbSession = await this.uow.sessions.findById(sessionId);
+    if (!dbSession) {
+      throw new Error(`Session not found: ${sessionId}`);
     }
-
-    // Generate the attention report
-    const reportData = await this.uow.sessions.generateAttentionReport(sessionId);
-    
-    return {
-      sessionId,
-      generatedAt: new Date().toISOString(),
-      students: reportData
-    };
+    session = dbSession;
   }
+  
+  const reportData = await this.uow.sessions.generateAttentionReport(sessionId);
+  
+  console.log('Report data retrieved:', reportData);
+  
+  return {
+    sessionId,
+    generatedAt: new Date().toISOString(),
+    students: reportData || []
+  };
+}
+
 
   getActiveSession(sessionId) {
     return this.activeSessions.get(sessionId);
@@ -93,4 +99,11 @@ export class SessionService {
   getAllActiveSessions() {
     return Array.from(this.activeSessions.values()).filter(session => session.active);
   }
+  async findById(sessionId) {
+  const result = await this.pool
+    .request()
+    .input('id', sessionId)
+    .query(`SELECT * FROM ${SessionModel.tableName} WHERE id = @id`);
+  return result.recordset[0] || null;
+}
 }
