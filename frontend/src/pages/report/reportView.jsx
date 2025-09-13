@@ -8,7 +8,6 @@ const ReportView = ({ currentSessionId, isSessionActive }) => {
   const [sessionIdInput, setSessionIdInput] = useState('');
 
   const generateReport = async (sessionId = null) => {
-    // Use provided sessionId, current session, or input
     const targetSessionId = sessionId || currentSessionId || sessionIdInput;
     
     if (!targetSessionId) {
@@ -87,7 +86,7 @@ const ReportView = ({ currentSessionId, isSessionActive }) => {
 
       {error && (
         <div className="report-error">
-          <p>❌ {error}</p>
+          <p>{error}</p>
         </div>
       )}
 
