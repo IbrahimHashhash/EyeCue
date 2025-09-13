@@ -969,7 +969,6 @@
   }
 }
 
-/* No students message styling */
 .no-students {
   grid-column: 1 / -1;
   text-align: center;
@@ -981,7 +980,6 @@
   font-size: 3rem;
   margin-bottom: 12px;
 }
-/* Report View Styles - Add to dashboard.css */
 
 .report-container {
   padding: 0;
@@ -1006,10 +1004,11 @@
 
 .generate-report-btn {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: rgb(50, 119, 184);
   border: none;
   border-radius: 10px;
   color: white;
+  margin-left: 10px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -1018,7 +1017,7 @@
 }
 
 .generate-report-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  background: rgb(75, 141, 203);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
 }

@@ -18,7 +18,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Header from "../../components/header/header";
 import StudentCard from "../../components/studentCard/studentCard";
 import DebugView from "../debug/debug";
-import ReportView from "../../components/report/reportView";
+import ReportView from "../report/reportView";
 
 const Dashboard = () => {
   const [students, setStudents] = useState([]);
@@ -237,9 +237,13 @@ const Dashboard = () => {
               isSessionActive={isSessionActive}
               sortedAndFilteredStudents={sortedAndFilteredStudents}
             />
-          ) : (
-            <ReportView />
-          )}
+          ) : currentView === "report" ? (
+            <ReportView 
+              currentSessionId={currentSessionId} 
+              isSessionActive={isSessionActive} 
+            />
+          ) : null}
+
         </section>
       </main>
       
