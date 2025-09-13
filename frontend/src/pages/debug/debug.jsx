@@ -1,3 +1,5 @@
+import { ReactComponent as NoStudentSVG } from "../../icons/noStudents.svg";
+
 const DebugView = ({ 
   students, 
   isSessionActive, 
@@ -7,7 +9,7 @@ const DebugView = ({
     <div className="students-grid">
       {sortedAndFilteredStudents.length === 0 ? (
         <div className="no-students">
-          <div className="no-students-icon">👥</div>
+          <div className="no-students-icon"><NoStudentSVG/></div>
           <h3>No Students Found</h3>
           <p>Start a camera session to see detailed analysis data</p>
         </div>

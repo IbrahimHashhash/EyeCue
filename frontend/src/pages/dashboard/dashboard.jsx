@@ -5,6 +5,11 @@ import { useSocket } from "../../hooks/useSocket";
 import SessionControl from "../../components/session/session"; 
 import LeaveSession from "../../components/leaveSession/leaveSession";
 import "./dashboard.css";
+import { ReactComponent as NoStudentSVG } from "../../icons/noStudents.svg";
+import { ReactComponent as DashboardSVG } from "../../icons/dashboard.svg";
+import { ReactComponent as DebugSVG } from "../../icons/debug.svg";
+import { ReactComponent as ReportSVG } from "../../icons/report.svg";
+
 import {
   getSessionDuration,
   filterStudents,
@@ -109,36 +114,21 @@ const Dashboard = () => {
       id: "overview",
       label: "Dashboard",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="20" x2="12" y2="10"></line>
-          <line x1="18" y1="20" x2="18" y2="4"></line>
-          <line x1="6" y1="20" x2="6" y2="16"></line>
-        </svg>
+        <DashboardSVG/>
       )
     },
     {
       id: "debug",
       label: "Detailed Analytics",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="6" y1="20" x2="6" y2="10"></line>
-          <line x1="12" y1="20" x2="12" y2="4"></line>
-          <line x1="18" y1="20" x2="18" y2="14"></line>
-          <polyline points="4,16 8,12 12,14 16,8 20,10"></polyline>
-        </svg>
+        <DebugSVG/>
       )
     },
     {
       id: "report",
       label: "Generate Report",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14,2 14,8 20,8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <polyline points="10,9 9,9 8,9"></polyline>
-        </svg>
+        <ReportSVG/>
       )
     }
   ];
@@ -217,7 +207,7 @@ const Dashboard = () => {
             <div className="simple-students-grid">
               {sortedAndFilteredStudents.length === 0 ? (
                 <div className="no-students">
-                  <div className="no-students-icon">👥</div>
+                  <div className="no-students-icon"><NoStudentSVG/></div>
                   <h3>No Students Found</h3>
                   <p>Start a camera session to see real-time attention data</p>
                 </div>
