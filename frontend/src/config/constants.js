@@ -28,3 +28,5 @@ export const FORM_DEFAULTS = {
   name: "",
   role: "student",
 };
+
+export const STORAGE_KEY = 'sessionId';

@@ -2,55 +2,66 @@ import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
+import FrameService  from '../services/frame.js';
 import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
 import { computeAlertFlag, resetAlertState } from '../services/alert.js';
 
-export async function frameHandler(req, res) {
-
-    const frame = req.file?.buffer;
-    const studentId = req.body.studentId;
-    const studentName = req.body.studentName;
-    const timestamp = new Date().toISOString();
-
-    if (!frame?.length) {
-        return res.status(400).send('No frame received');
+export class FrameController {
+    constructor(uow) {
+        this.frameservice = new FrameService(uow);
     }
 
-    if (!studentId) {
-        return res.status(400).send('No ID received');
-    }
+    async frameHandler(req, res) {
 
-    try {
-        const comparasonResult = await compareAgainstPrevious(studentId, frame);
-        if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
-            console.log("Frame received is similar to the last one !");
+        const frame = req.file?.buffer;
+        const studentId = req.body.studentId;
+        const studentName = req.body.studentName;
+        const timestamp = new Date().toISOString();
+        const sessionId = req.body.sessionId || req.get('X-Session-Id');
 
-            return res.json({
-                success: true,
-                ts: Number(timestamp),
-                clientId: studentId,
-                skipped: true,
-                reason: 'similar_to_previous',
-                similarity: comparasonResult
-            });
+        if (!frame?.length) {
+            return res.status(400).send('No frame received');
         }
 
-        console.log(`Frame received from FE, size: ${frame.length} bytes`);
+        if (!studentId) {
+            return res.status(400).send('No ID received');
+        }
 
-        const frameBase64 = frame.toString('base64');
+        if (!sessionId) {
+            return res.status(400).json({ success: false, message: 'sessionId required' });
+        }
 
-        console.log('Processing frame for student:', studentId);
+        try {
+            const comparasonResult = await compareAgainstPrevious(studentId, frame);
+            if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
+                console.log("Frame received is similar to the last one !");
 
-        const analysisResult = await processFrame(frameBase64, studentId, timestamp);
+                return res.json({
+                    success: true,
+                    ts: Number(timestamp),
+                    clientId: studentId,
+                    skipped: true,
+                    reason: 'similar_to_previous',
+                    similarity: comparasonResult
+                });
+            }
 
-        const stabilizationResult = processAttentionWithCounter(
-            6, 
-            studentId, 
-            analysisResult.attentionLabel
-        );
+            console.log(`Frame received from FE, size: ${frame.length} bytes`);
 
-        console.log(`Stabilization for ${studentId}: Stable=${stabilizationResult.stableState}, Counter=${stabilizationResult.counter}`);
+            const frameBase64 = frame.toString('base64');
+
+            console.log('Processing frame for student:', studentId);
+
+            const analysisResult = await processFrame(frameBase64, studentId, timestamp);
+
+            const stabilizationResult = processAttentionWithCounter(
+                6,
+                studentId,
+                analysisResult.attentionLabel
+            );
+
+            console.log(`Stabilization for ${studentId}: Stable=${stabilizationResult.stableState}, Counter=${stabilizationResult.counter}`);
 
         if (stabilizationResult.shouldUpdate) {
             recordAttentionData(studentId, timestamp, stabilizationResult.stableState);
@@ -58,38 +69,49 @@ export async function frameHandler(req, res) {
             resetAlertState();
         }
 
-        const alertFlag = computeAlertFlag();
+            const alertFlag = computeAlertFlag();
 
-        recordAttentionData(studentId, timestamp, analysisResult.attentionLabel);
+            recordAttentionData(studentId, timestamp, analysisResult.attentionLabel);
 
-        console.log('Received analysis from FastAPI:', analysisResult);
+            console.log('Received analysis from FastAPI:', analysisResult);
 
-        const io = getIO();
+            const io = getIO();
 
-        io.emit('attentionUpdate', {
-            studentId: analysisResult.studentId,
-            alert: alertFlag,
-            studentName: studentName,
-            label: stabilizationResult.stableState, 
-            analysis: analysisResult,
-            timestamp: timestamp,
-            stabilization: stabilizationResult
-        });
+            io.emit('attentionUpdate', {
+                studentId: analysisResult.studentId,
+                alert: alertFlag,
+                studentName: studentName,
+                label: stabilizationResult.stableState,
+                analysis: analysisResult,
+                timestamp: timestamp,
+                stabilization: stabilizationResult
+            });
 
-        return res.status(200).json({
-            success: true,
-            analysis: analysisResult,
-            studentId: studentId,
-            timestamp: timestamp,
-            stabilization: stabilizationResult
-        });
+            await this.frameservice.storeFrame({
+                sessionId,
+                studentId,
+                studentName,
+                timestamp,
+                similarity_score: comparasonResult.scores.ssim,
+                label: analysisResult.attentionLabel
+            });
+            console.log('Frame log stored for student:', studentId);
 
-    } catch (error) {
-        console.error('Error processing frame:', error.message);
-        return res.status(500).json({
-            success: false,
-            error: 'Failed to process frame',
-            details: error.message
-        });
+            return res.status(200).json({
+                success: true,
+                analysis: analysisResult,
+                studentId: studentId,
+                timestamp: timestamp,
+                stabilization: stabilizationResult
+            });
+
+        } catch (error) {
+            console.error('Error processing frame:', error.message);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to process frame',
+                details: error.message
+            });
+        }
     }
 }
