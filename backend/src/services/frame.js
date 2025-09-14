@@ -3,9 +3,7 @@ import AttentionMetricRepository from '../repositories/attentionMetricRepository
 import { v4 as uuidv4 } from 'uuid';
 
 class FrameService {
-    /**
-     * @param {object} uow - Your Unit of Work (with or exposing a pool)
-     */
+   
     constructor(uow) {
         if (!uow) throw new Error('FrameService requires a uow');
         this.uow = uow;
@@ -13,15 +11,6 @@ class FrameService {
         if (!this.pool) throw new Error('FrameService could not resolve a DB pool from uow');
     }
 
-    /**
-     * Store a frame log (and optional attention label) in DB.
-     * @param {Object} params
-     * @param {string|number} params.sessionId
-     * @param {string|number} params.studentId
-     * @param {string|number|Date} params.timestamp
-     * @param {number|null} params.similarityScore
-     * @param {string|number|null} [params.label] - optional attention label to attach
-     */
     async storeFrame({ sessionId, studentId, timestamp, similarity_score, label = null }) {
         const frameLogRepo = new FrameLogRepository(this.pool);
         const id = uuidv4();  
