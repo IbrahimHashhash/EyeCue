@@ -4,7 +4,7 @@ import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
 import { compareAgainstPrevious } from '../services/check-similarity/similarity.js';
-import FrameService from '../servicses/frame.js';
+import FrameService from '../services/frame.js';
 import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
 import { computeAlertFlag, resetAlertState } from '../services/alert.js';
