@@ -33,4 +33,41 @@ export const sessionService = {
     
     return await response.json();
   },
+  async generateReport(sessionId = null) {
+    const body = sessionId ? JSON.stringify({ sessionId }) : JSON.stringify({});
+    
+    const response = await fetch(ENDPOINTS.SESSION.REPORT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to generate report');
+    }
+    
+    return await response.json();
+  },
+
+  async downloadPDF(sessionId = null) {
+    const body = sessionId ? JSON.stringify({ sessionId }) : JSON.stringify({});
+    
+    const response = await fetch(ENDPOINTS.SESSION.DOWNLOAD_PDF, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to download PDF');
+    }
+    
+    return response.blob();
+  },
 };

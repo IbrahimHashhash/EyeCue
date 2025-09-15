@@ -17,42 +17,32 @@ router.post('/end', (req, res) => {
 });
 
 router.post('/report', async (req, res) => {
-    try {
-        const { sessionId } = req.body;
-        const uow = req.app.locals.uow;
-        const sessionService = new SessionService(uow);
-        
-        const reportData = await sessionService.generateReport(sessionId);
-
-        res.json({
-            success: true,
-            data: reportData,
-            message: 'Report generated successfully'
-        });
-    } catch (error) {
-        console.error('Report generation error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+  const ctrl = new SessionController(req.app.locals.uow);
+  return ctrl.generateReport(req, res);
 });
 
 router.post('/download-pdf', async (req, res) => {
     try {
         const { sessionId } = req.body;
         
-        if (!sessionId) {
-            return res.status(400).json({
-                success: false,
-                message: 'Session ID is required'
-            });
+        let targetSessionId = sessionId;
+        if (!targetSessionId) {
+            const uow = req.app.locals.uow;
+            const sessionService = new SessionService(uow);
+            targetSessionId = sessionService.getCurrentActiveSessionId();
+            
+            if (!targetSessionId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No session ID provided and no active session found'
+                });
+            }
         }
 
         const uow = req.app.locals.uow;
         const sessionService = new SessionService(uow);
         
-        const reportData = await sessionService.generateReport(sessionId);
+        const reportData = await sessionService.generateReport(targetSessionId);
         
         if (!reportData || !reportData.students || reportData.students.length === 0) {
             return res.status(404).json({
@@ -61,9 +51,9 @@ router.post('/download-pdf', async (req, res) => {
             });
         }
 
-        if (pdfService.reportExists(sessionId)) {
-            const filepath = pdfService.getReportPath(sessionId);
-            return res.download(filepath, `${sessionId}.pdf`);
+        if (pdfService.reportExists(targetSessionId)) {
+            const filepath = pdfService.getReportPath(targetSessionId);
+            return res.download(filepath, `${targetSessionId}.pdf`);
         }
 
         const { filepath, filename } = await pdfService.generateSessionReportPDF(reportData);
