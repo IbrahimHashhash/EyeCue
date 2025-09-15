@@ -8,10 +8,20 @@ const SessionControl = ({ onSessionStart, onSessionEnd }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && saved !== 'null' && saved !== 'undefined') {
-      setCurrentSessionId(saved);
-    }
+    const validateStoredSession = async () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        try {
+          console.log('Found stored session ID:', saved);
+          localStorage.removeItem(STORAGE_KEY);
+          console.log('Cleared stored session ID to start fresh');
+        } catch (err) {
+          console.log('Invalid stored session, clearing:', err);
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+    };
+    validateStoredSession();
   }, []);
 
   useEffect(() => {
