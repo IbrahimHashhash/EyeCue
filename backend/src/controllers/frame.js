@@ -6,10 +6,12 @@ import FrameService from '../services/frame.js';
 import { processAttentionWithCounter } from '../services/attentionStabilization.js';
 import { updateStudent } from '../services/studentState.js';
 import { computeAlertFlag, resetAlertState } from '../services/alert.js';
+import { SessionService } from '../services/sessionStart.js';
 
 export class FrameController {
     constructor(uow) {
         this.frameservice = new FrameService(uow);
+        this.sessionService = new SessionService(uow);
     }
 
     async frameHandler(req, res) {
@@ -18,6 +20,7 @@ export class FrameController {
         const studentName = req.body.studentName;
         const timestamp = new Date().toISOString();
         const sessionId = req.body.sessionId || req.get('X-Session-Id');
+        
         if (!frame?.length) {
             return res.status(400).send('No frame received');
         }
@@ -34,6 +37,16 @@ export class FrameController {
         }
 
         try {
+            const activeSession = this.sessionService.getActiveSession(sessionId);
+            if (!activeSession || !activeSession.active) {
+                console.log(`Rejecting frame - Session ${sessionId} is not active`);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Session is not active',
+                    sessionId: sessionId
+                });
+            }
+
             const comparasonResult = await compareAgainstPrevious(studentId, frame);
             if (!comparasonResult.firstFrame && !comparasonResult.noticeableChange) {
                 console.log("Frame received is similar to the last one!");
@@ -84,16 +97,21 @@ export class FrameController {
                 console.error('Error storing frame log:', storeError);
             }
 
-            const io = getIO();
-            io.emit('attentionUpdate', {
-                studentId: analysisResult.studentId,
-                alert: alertFlag,
-                studentName: studentName,
-                label: stabilizationResult.stableState,
-                analysis: analysisResult,
-                timestamp: timestamp,
-                stabilization: stabilizationResult
-            });
+            const stillActiveSession = this.sessionService.getActiveSession(sessionId);
+            if (stillActiveSession && stillActiveSession.active) {
+                const io = getIO();
+                io.emit('attentionUpdate', {
+                    studentId: analysisResult.studentId,
+                    alert: alertFlag,
+                    studentName: studentName,
+                    label: stabilizationResult.stableState,
+                    analysis: analysisResult,
+                    timestamp: timestamp,
+                    stabilization: stabilizationResult
+                });
+            } else {
+                console.log(`Not emitting update - Session ${sessionId} became inactive during processing`);
+            }
 
             return res.status(200).json({
                 success: true,

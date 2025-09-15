@@ -14,7 +14,7 @@ const AuthForm = ({ onSubmit }) => {
             await onSubmit(formData);
             resetForm();
         } catch (err) {
-            setError(err.message);
+           setError("Invalid login"); 
         } finally {
             setIsLoading(false);
         }
