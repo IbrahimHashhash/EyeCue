@@ -1,50 +1,19 @@
 import express from 'express';
 import { SessionService } from '../services/sessionStart.js';
+import { SessionController } from '../controllers/session.js';
 import { PDFService } from '../services/downloadPDF.js';
 
 const router = express.Router();
 const pdfService = new PDFService();
 
-router.post('/start', async (req, res) => {
-    try {
-        const uow = req.app.locals.uow;
-        const sessionService = new SessionService(uow);
-        const sessionId = await sessionService.startSession();
-
-        res.json({
-            success: true,
-            sessionId,
-            message: 'Session started successfully'
-        });
-    } catch (error) {
-        console.error('Session start error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+router.post('/start', (req, res) => {
+  const ctrl = new SessionController(req.app.locals.uow);
+  return ctrl.startSession(req, res);
 });
 
-router.post('/end', async (req, res) => {
-    try {
-        const { sessionId } = req.body;
-        const uow = req.app.locals.uow;
-        const sessionService = new SessionService(uow);
-        
-        const result = await sessionService.endSession(sessionId);
-
-        res.json({
-            success: true,
-            data: result,
-            message: 'Session ended successfully'
-        });
-    } catch (error) {
-        console.error('Session end error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+router.post('/end', (req, res) => {
+  const ctrl = new SessionController(req.app.locals.uow);
+  return ctrl.endSession(req, res);
 });
 
 router.post('/report', async (req, res) => {

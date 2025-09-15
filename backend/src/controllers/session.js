@@ -9,16 +9,19 @@ export class SessionController {
   async startSession(req, res) {
     try {
       const sessionId = await this.sessionService.startSession();
-      res.json({ 
-        success: true, 
+      
+      console.log('Session started:', sessionId);
+      
+      res.status(200).json({
+        success: true,
         sessionId,
-        message: 'Session started successfully' 
+        message: 'Session started successfully'
       });
     } catch (error) {
       console.error('Error starting session:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: error.message 
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to start session'
       });
     }
   }
@@ -26,29 +29,31 @@ export class SessionController {
   async endSession(req, res) {
     try {
       const { sessionId } = req.body;
+      console.log(`Request to end session with ID: ${sessionId}`);
       
       if (!sessionId) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Session ID is required' 
+        return res.status(400).json({
+          success: false,
+          message: 'Session ID is required'
         });
       }
 
-      const session = await this.sessionService.endSession(sessionId);
-      res.json({ 
-        success: true, 
-        session,
-        message: 'Session ended successfully' 
+      await this.sessionService.endSession(sessionId);
+      
+      console.log('Session ended:', sessionId);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Session ended successfully'
       });
     } catch (error) {
       console.error('Error ending session:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: error.message 
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to end session'
       });
     }
   }
-
   async generateReport(req, res) {
     try {
       const { sessionId } = req.body;

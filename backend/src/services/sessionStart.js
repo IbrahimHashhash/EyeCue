@@ -59,41 +59,35 @@ export class SessionService {
 
     return session;
   }
-
-async generateReport(sessionId) {
-  if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
   
-  console.log('Generating report for session ID:', sessionId);
-  
-  let session = this.activeSessions.get(sessionId);
-  
-  if (!session) {
-    const dbSession = await this.uow.sessions.findById(sessionId);
-    if (!dbSession) {
-      throw new Error(`Session not found: ${sessionId}`);
+  async generateReport(sessionId) {
+    if (!this.uow?.sessions) throw new Error("UnitOfWork not initialized");
+    
+    console.log('Generating report for session ID:', sessionId);
+    
+    let session = this.activeSessions.get(sessionId);
+    
+    if (!session) {
+      const dbSession = await this.uow.sessions.findById(sessionId);
+      if (!dbSession) {
+        throw new Error(`Session not found: ${sessionId}`);
+      }
+      session = dbSession;
     }
-    session = dbSession;
+    
+    const reportData = await this.uow.sessions.generateAttentionReport(sessionId);
+    
+    console.log('Report data retrieved:', reportData);
+    
+    return {
+      sessionId,
+      generatedAt: new Date().toISOString(),
+      students: reportData || []
+    };
   }
-  
-  const reportData = await this.uow.sessions.generateAttentionReport(sessionId);
-  
-  console.log('Report data retrieved:', reportData);
-  
-  return {
-    sessionId,
-    generatedAt: new Date().toISOString(),
-    students: reportData || []
-  };
-}
-
 
   getActiveSession(sessionId) {
     return this.activeSessions.get(sessionId);
-  }
-
-  getCurrentActiveSessionId() {
-    const activeSessions = this.getAllActiveSessions();
-    return activeSessions.length > 0 ? activeSessions[0].id : null;
   }
 
   getAllActiveSessions() {
