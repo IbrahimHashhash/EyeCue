@@ -13,7 +13,7 @@ router.post('/start', async (req, res) => {
 
         res.json({
             success: true,
-            data: { sessionId },
+            sessionId,
             message: 'Session started successfully'
         });
     } catch (error) {

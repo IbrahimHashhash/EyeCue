@@ -99,11 +99,4 @@ async generateReport(sessionId) {
   getAllActiveSessions() {
     return Array.from(this.activeSessions.values()).filter(session => session.active);
   }
-  async findById(sessionId) {
-  const result = await this.pool
-    .request()
-    .input('id', sessionId)
-    .query(`SELECT * FROM ${SessionModel.tableName} WHERE id = @id`);
-  return result.recordset[0] || null;
-}
 }

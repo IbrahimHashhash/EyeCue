@@ -6,13 +6,13 @@ const SessionControl = ({ onSessionStart, onSessionEnd }) => {
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && saved !== 'null' && saved !== 'undefined') {
       setCurrentSessionId(saved);
+      onSessionStart?.(saved);
     }
-  }, []);
+  }, [onSessionStart]);
 
   useEffect(() => {
     if (currentSessionId) {

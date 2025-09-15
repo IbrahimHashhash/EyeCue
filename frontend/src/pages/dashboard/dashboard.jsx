@@ -9,6 +9,7 @@ import NoStudentPNG from "../../icons/student.png";
 import { ReactComponent as DashboardSVG } from "../../icons/dashboard.svg";
 import { ReactComponent as DebugSVG } from "../../icons/debug.svg";
 import { ReactComponent as ReportSVG } from "../../icons/report.svg";
+import { STORAGE_KEY } from "../../config/constants.js";
 
 import {
   getSessionDuration,
@@ -42,7 +43,6 @@ const Dashboard = () => {
   const [sessionDuration, setSessionDuration] = useState("00:00");
   const [currentView, setCurrentView] = useState("overview");
   const [currentSessionId, setCurrentSessionId] = useState(null);
-
   const handleAttentionUpdate = useCallback((data) => {
     if (!currentSessionId) {
       console.log('Ignoring attention update - no active session');
@@ -80,15 +80,18 @@ const Dashboard = () => {
 
   const handleSessionStart = (sessionId) => {
     console.log('Session started:', sessionId);
+    const startTime = new Date();
     setCurrentSessionId(sessionId);
     setIsSessionActive(true);
-    setSessionStartTime(new Date());
+    setSessionStartTime(startTime);
     setStudents([]);
     setSessionStats({
       totalAttentiveFrames: 0,
       totalInattentiveFrames: 0,
       attentivePercentage: 0
     });
+    
+    localStorage.setItem(STORAGE_KEY + '_startTime', startTime.toISOString());
   };
 
   const handleSessionEnd = (sessionId) => {
@@ -97,6 +100,8 @@ const Dashboard = () => {
     setIsSessionActive(false);
     setSessionStartTime(null);
     setLastUpdate(null);
+    
+    localStorage.removeItem(STORAGE_KEY + '_startTime');
   };
 
   const filteredStudents = filterStudents(students, searchTerm, selectedFilter);
