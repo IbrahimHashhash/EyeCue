@@ -1,5 +1,3 @@
-// controllers/frame.js - Fixed version
-
 import { processFrame } from '../services/fastapi.js';
 import { getIO } from '../socket/index.js';
 import { recordAttentionData } from '../services/session.js';
@@ -70,10 +68,8 @@ export class FrameController {
 
             const alertFlag = computeAlertFlag();
 
-            // Record attention data
             recordAttentionData(studentId, timestamp, analysisResult.attentionLabel);
 
-            // Store frame log in database
             try {
                 const frameLogId = await this.frameservice.storeFrame({
                     sessionId,

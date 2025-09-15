@@ -1,5 +1,3 @@
-// services/frame.js - Fixed version
-
 import { v4 as uuidv4 } from 'uuid';
 import FrameLogRepository from '../repositories/frameLogRepository.js';
 import AttentionMetricRepository from '../repositories/attentionMetricRepository.js';
