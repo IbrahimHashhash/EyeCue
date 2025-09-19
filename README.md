@@ -12,7 +12,7 @@
 - **Cross-platform support**: Works on Windows, macOS, and web.  
 - **Easy setup**: Install via `npm` for frontend and Python `requirements.txt` for backend.  
 
-> ⚠️ **Note:** This version uses only facial cues for attention detection. Heart rate and heart rate variability integration will be added in future versions.
+> ⚠️ **Note:** This version won't include heart rate and heart rate variability, so it becomes more accessible 
 
 ---
 
@@ -47,6 +47,7 @@ pip install npm
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
