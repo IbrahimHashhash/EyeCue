@@ -18,7 +18,7 @@
 
 ## Demo
 
-Check out a live demo of EyeCue here: [LinkedIn Demo](linkedin/)
+Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY)
 
 ---
 
@@ -47,6 +47,7 @@ pip install npm
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
