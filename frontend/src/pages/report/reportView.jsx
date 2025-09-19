@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import ENDPOINTS from '../../api/endpoints';
+import ReportHeader from '../components/reportHeader/reportHeader';
+import ErrorMessage from '../components/errorMessage/errorMessage';
+import ReportContent from '../components/reportContent/reportContent';
 
 const ReportView = ({ currentSessionId, isSessionActive }) => {
   const [reportData, setReportData] = useState(null);
@@ -93,111 +96,21 @@ const ReportView = ({ currentSessionId, isSessionActive }) => {
 
   return (
     <div className="report-container">
-      <div className="report-header">
-        <h2>Session Attention Report</h2>
-        <div className="report-controls">
-          {currentSessionId ? (
-            <div className="current-session-info">
-              <p>Current Session: <strong>{currentSessionId}</strong></p>
-              <button 
-                className="generate-report-btn"
-                onClick={() => generateReport()}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Generating...' : 'Generate Current Session Report'}
-              </button>
-            </div>
-          ) : (
-            <div className="manual-session-input">
-              <input
-                type="text"
-                placeholder="Enter Session ID"
-                value={sessionIdInput}
-                onChange={(e) => setSessionIdInput(e.target.value)}
-                className="search-input"
-              />
-              <button 
-                className="generate-report-btn"
-                onClick={() => generateReport()}
-                disabled={isLoading || !sessionIdInput}
-              >
-                {isLoading ? 'Generating...' : 'Generate Report'}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {error && (
-        <div className="report-error">
-          <p>{error}</p>
-        </div>
-      )}
-
-      {reportData && (
-        <div className="report-content">
-          <div className="report-meta">
-            <div className="report-info">
-              <p><strong>Session ID:</strong> {reportData.sessionId}</p>
-              <p><strong>Generated At:</strong> {new Date(reportData.generatedAt).toLocaleString()}</p>
-              <p><strong>Total Students:</strong> {reportData.students.length}</p>
-            </div>
-            <div className="report-actions">
-              <button 
-                className="download-pdf-btn"
-                onClick={downloadReportAsPDF}
-                disabled={isDownloading}
-              >
-                {isDownloading ? 'Downloading...' : 'Download PDF'}
-              </button>
-            </div>
-          </div>
-
-          {reportData.students.length > 0 ? (
-            <div className="report-table-container">
-              <table className="report-table">
-                <thead>
-                  <tr>
-                    <th>Student Name</th>
-                    <th>Total Frames</th>
-                    <th>Attentive Frames</th>
-                    <th>Attention Percentage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.students.map((student, index) => (
-                    <tr key={index} className={
-                      student.attention_percentage >= 70 ? 'high-attention' : 
-                      student.attention_percentage >= 50 ? 'medium-attention' : 
-                      'low-attention'
-                    }>
-                      <td>{student.name}</td>
-                      <td>{student.total_frames}</td>
-                      <td>{student.attentive_frames}</td>
-                      <td className="percentage-cell">
-                        <span className="percentage-value">
-                          {Number(student.attention_percentage).toFixed(2)}%
-                        </span>
-                        <div className="percentage-bar">
-                          <div 
-                            className="percentage-fill" 
-                            style={{width: `${student.attention_percentage}%`}}
-                          ></div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="no-data">
-              <p>No attention data available for this session.</p>
-              <p>Make sure the session has recorded attention data.</p>
-            </div>
-          )}
-        </div>
-      )}
+      <ReportHeader 
+        currentSessionId={currentSessionId}
+        sessionIdInput={sessionIdInput}
+        setSessionIdInput={setSessionIdInput}
+        onGenerateReport={generateReport}
+        isLoading={isLoading}
+      />
+      
+      <ErrorMessage error={error} />
+      
+      <ReportContent 
+        reportData={reportData}
+        onDownloadPDF={downloadReportAsPDF}
+        isDownloading={isDownloading}
+      />
     </div>
   );
 };
