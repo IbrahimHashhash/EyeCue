@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ENDPOINTS from '../../api/endpoints';
-import ReportHeader from '../components/reportHeader/reportHeader';
-import ErrorMessage from '../components/errorMessage/errorMessage';
-import ReportContent from '../components/reportContent/reportContent';
+import ReportHeader from '../../components/reportHeader/reportHeader';
+import ErrorMessage from '../../components/errorMessage/errorMessage';
+import ReportContent from '../../components/reportContent/reportContent';
 
 const ReportView = ({ currentSessionId, isSessionActive }) => {
   const [reportData, setReportData] = useState(null);
