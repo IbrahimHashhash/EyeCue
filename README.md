@@ -10,7 +10,7 @@
 - **Multi-student monitoring**: Tracks multiple students simultaneously.  
 - **Alerts & reports**: Sends notifications and generates attention summaries.  
 - **Cross-platform support**: Works on Windows, macOS, and web.  
-- **Easy setup**: Install via `npm` for frontend and Python `requirements.txt` for backend.  
+- **Easy setup**: Install via `npm` for frontend && backend and Python `requirements.txt` for ai-service.  
 
 > ⚠️ **Note:** This version won't include heart rate and heart rate variability, so it becomes more accessible 
 
@@ -47,6 +47,7 @@ pip install npm
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
