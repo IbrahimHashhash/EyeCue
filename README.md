@@ -40,6 +40,11 @@ pip install -r requirements.txt
 ```
 npm install
 ```
+### Frontend (React)
+```
+npm install
+```
+
 ---
 
 ## Contributors 
@@ -48,6 +53,7 @@ npm install
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
