@@ -30,11 +30,6 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 git clone https://github.com/IbrahimHashhash/EyeCue.git
 cd EyeCue
 
-# Create virtual environment (optional)
-python -m venv venv
-source venv/bin/activate  # mac/linux
-venv\Scripts\activate     # Windows
-
 # Install dependencies
 pip install -r requirements.txt
 npm install```
@@ -46,6 +41,7 @@ npm install```
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
