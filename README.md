@@ -37,8 +37,7 @@ venv\Scripts\activate     # Windows
 
 # Install dependencies
 pip install -r requirements.txt
-pip install npm
-```
+npm install```
 ---
 
 ## Contributors 
@@ -47,6 +46,7 @@ pip install npm
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
