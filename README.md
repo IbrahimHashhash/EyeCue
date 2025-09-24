@@ -30,7 +30,6 @@ git clone https://github.com/IbrahimHashhash/EyeCue.git
 cd EyeCue
 
 # Install dependencies
----
 ```
 ### Micro AI service (Python)
 ```
@@ -53,6 +52,7 @@ npm install
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
