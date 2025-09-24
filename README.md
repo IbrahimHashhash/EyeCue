@@ -10,7 +10,7 @@
 - **Multi-student monitoring**: Tracks multiple students simultaneously.  
 - **Alerts & reports**: Sends notifications and generates attention summaries.
   
-> ⚠️ **Note:** This version won't include heart rate and heart rate variability, so it becomes more accessible 
+> ⚠️ **Note:** This version won't include Apple Watch integration, so it becomes more accessible and easier to use
 
 ---
 
@@ -26,6 +26,7 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
