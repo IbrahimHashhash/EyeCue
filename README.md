@@ -22,36 +22,13 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 
 ---
 
-## Installation
-
-```bash
-# Clone the repo
-git clone https://github.com/IbrahimHashhash/EyeCue.git
-cd EyeCue
-
-# Install dependencies
-```
-### Micro AI service (Python)
-```
-pip install -r requirements.txt
-```
-### Backend (Express)
-```
-npm install
-```
-### Frontend (React)
-```
-npm install
-```
-
----
-
 ## Contributors 
 - Ibrahim Abuhashhash
 - Abedalrheem Fialah
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
