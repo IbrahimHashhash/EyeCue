@@ -19,6 +19,8 @@
 Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY)
 
 ---
+## Maintainer
+- Ibrahim Hashhash – Continuing development and enhancements
 
 ## Contributors 
 - Ibrahim Abuhashhash
@@ -29,6 +31,7 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 
 
 > ⚠️ **Developer Note:** I will be working on enhancing the project further.   
+
 
 
 
