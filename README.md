@@ -8,9 +8,8 @@
 
 - **Real-time attention tracking**: Detects if a student is attentive or distracted.  
 - **Multi-student monitoring**: Tracks multiple students simultaneously.  
-- **Alerts & reports**: Sends notifications and generates attention summaries.  
-- **Cross-platform support**: Works on Windows, macOS, and web.  
-
+- **Alerts & reports**: Sends notifications and generates attention summaries.
+  
 > ⚠️ **Note:** This version won't include heart rate and heart rate variability, so it becomes more accessible 
 
 ---
@@ -27,6 +26,7 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 - Aya Jabi
 - Talin Abuzulof
 - Saif Sabelaish
+
 
 
 
