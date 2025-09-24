@@ -23,7 +23,7 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 - Ibrahim Hashhash – Continuing development and enhancements
 
 ## Contributors 
-- Ibrahim Abuhashhash
+- Ibrahim Hashhash
 - Abedalrheem Fialah
 - Aya Jabi
 - Talin Abuzulof
@@ -31,6 +31,7 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 
 
 > ⚠️ **Developer Note:** I will be working on enhancing the project further.   
+
 
 
 
