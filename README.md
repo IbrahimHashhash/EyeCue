@@ -28,6 +28,8 @@ Check out a live demo of EyeCue here: [LinkedIn Demo](https://lnkd.in/p/gHCymSyY
 - Saif Sabelaish
 
 
+> ⚠️ **Developer Note:** I will be working on enhancing the project further.   
+
 
 
 
